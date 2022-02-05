@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 set(PLUGIN_NAME "EarthEcho")
+string(TOLOWER ${PLUGIN_NAME} PLUGIN_NAME_LOWERCASE)
 project(${PLUGIN_NAME}_project VERSION 1.0.1)
 
 option(PLUGIN_VST3 "Build VST3 Plugin" OFF)
@@ -21,6 +22,7 @@ message(STATUS "JUCE Formats: ${PLUGIN_FORMATS}")
 
 juce_add_plugin(${PLUGIN_NAME}
   PLUGIN_NAME ${PLUGIN_NAME}
+  PRODUCT_NAME ${PLUGIN_NAME_LOWERCASE}
   BUNDLE_ID "com.jimmykenmerchant.earthEcho"
   ICON_SMALL "../resources/icons/icon128.png"
   ICON_LARGE "../resources/icons/icon256.png"

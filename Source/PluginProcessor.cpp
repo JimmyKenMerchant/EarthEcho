@@ -25,7 +25,7 @@
 
 _earthEchoSliderParameters earthEchoSliderParameters[EARTHECHO_NUMBER_PARAMETERS] =
 {
-    {"wetgain", "Wet Gain", {0.0f, 1.0f, 0.0025f}, 0.5f, " Gain", 4.0f},
+    {"wetgain", "Wet Gain", {0.0f, 1.0f, 0.002f}, 0.2f, " Gain", 5.0f},
     {"drywet", "Dry/Wet", {0.0f, 1.0f, 0.01f}, 0.5f, " Wet", 1.0f},
     {"delay", "Delay Time", {0.0f, 1.0f, 0.01f}, 0.5f, " Seconds", 1.0f},
     {"repeat", "Repeat Rate", {0.0f, 1.0f, 0.01f}, 0.5f, " Repeats", 1.0f},

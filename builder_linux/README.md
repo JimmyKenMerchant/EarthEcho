@@ -17,7 +17,7 @@
 
 **builder_linux.sh**
 
-* This script downloads JUCE framework and builds a standalone executable, a VST3 plugin, and a LV2 plugin.
+* This Bash script downloads JUCE framework and builds a standalone executable, a VST3 plugin, and a LV2 plugin.
   * Example to Build All: `./builder_linux.sh vst3 lv2`
   * A standalone executable is build without any argument.
   * If you select to build a LV2 plugin, the JUCE framework is downloaded from [the fork of the LV2 porting project](https://github.com/lv2-porting-project/JUCE/tree/lv2).
@@ -32,7 +32,7 @@
 
 **installer_linux.sh**
 
-* This script helps to install an executable and plugins to your Linux system.
+* This Bash script helps to install an executable and plugins to your Linux system.
   * Example to Install All: `./installer_linux.sh standalone vst3 lv2`
   * Example to Uninstall Standalone: `./installer_linux.sh standalone uninstall`
   * This script needs the root privilege.
@@ -41,11 +41,13 @@
 
 * Arguments (Orderless):
   1. "standalone" - Install/Uninstall Standalone Executable to PREFIX_PATH/bin
-  2. "vst3" - Install/Uninstall VST3 Plugin Package to PREFIX_PATH/lib/vst3
-  3. "lv2" - Install/Uninstall LV2 Plugin Package to PREFIX_PATH/lib/lv2
-  4. "uninstall" - Set Uninstall Mode
+  2. "icons" - Install/Uninstall Small, Big, and Scalable Icons to PREFIX_PATH/share/icons/hicolor/ICON_SIZExICON_SIZE(or 'scalable')/apps: A .desktop (Desktop Entry) file is also installed to PREFIX_PATH/share/applications for linking icons to the standalone executable.
+  3. "vst3" - Install/Uninstall VST3 Plugin Package to PREFIX_PATH/lib/vst3
+  4. "lv2" - Install/Uninstall LV2 Plugin Package to PREFIX_PATH/lib/lv2
+  5. "uninstall" - Set Uninstall Mode
 
 **History**
 
+* February 5, 2022: Added the "icons" arguments to "installer_linux.sh". Installing with lowercase letters.
 * January 30, 2022: Added the "debug" and "newjuce" arguments to "builder_linux.sh".
 * January 29, 2022: Published "builder_linux.sh", "installer_linux.sh", and "README.md" for the first time.

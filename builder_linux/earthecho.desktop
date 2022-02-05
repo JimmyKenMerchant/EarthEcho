@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=EarthEcho
+Comment=Standalone Audio Plugin
+Exec=earthecho
+Icon=earthecho
+Terminal=false
+Type=Application

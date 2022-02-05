@@ -27,6 +27,7 @@
 * I made a plugin with standalone, VST3 format, and LV2 format. Note that [a JUCE fork of the LV2 porting project will be automatically downloaded to make LV2 plugins on my Bash script](https://github.com/lv2-porting-project/JUCE/tree/lv2). If you don't select to make a LV2 plugin, the official JUCE will be downloaded.
 
 ```bash
+cd ~/Desktop
 git clone -b main https://github.com/JimmyKenMerchant/EarthEcho.git
 cd EarthEcho/builder_linux
 # For more detail, read "builder_linux/README.md".
