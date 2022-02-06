@@ -1,7 +1,13 @@
 [Desktop Entry]
 Name=EarthEcho
+Name[ja]=アースエコー
+GenericName=Audio Plugin
+GenericName[ja]=オーディオプラグイン
 Comment=Standalone Audio Plugin
+Comment[ja]=スタンドアローン型オーディオプラグイン
 Exec=earthecho
 Icon=earthecho
 Terminal=false
 Type=Application
+Categories=AudioVideo;Audio;
+MimeType=application/x-earthecho-project;

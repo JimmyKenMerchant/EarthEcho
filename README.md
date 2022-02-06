@@ -6,7 +6,7 @@
 
 * EarthEcho is an audio plugin made with [JUCE framework](https://github.com/juce-framework/JUCE).
 
-* EarthEcho makes an echo effect on each channel (e.g., left, right, etc.) with various sliders.
+* EarthEcho makes an echo effect on each channel (e.g., left, right, etc.) with various sliders to emulate nature.
 
 * EarthEcho has a retro computing style graphic user interface.
 

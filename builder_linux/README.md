@@ -41,7 +41,7 @@
 
 * Arguments (Orderless):
   1. "standalone" - Install/Uninstall Standalone Executable to PREFIX_PATH/bin
-  2. "icons" - Install/Uninstall Small, Big, and Scalable Icons to PREFIX_PATH/share/icons/hicolor/ICON_SIZExICON_SIZE(or 'scalable')/apps: A .desktop (Desktop Entry) file is also installed to PREFIX_PATH/share/applications for linking icons to the standalone executable.
+  2. "icons" - Install/Uninstall Small, Big, and Scalable Icons to PREFIX_PATH/share/icons/hicolor/ICON_SIZExICON_SIZE(or 'scalable')/apps: A .desktop (Desktop Entry) file is also installed to PREFIX_PATH/share/applications for linking icons to the standalone executable. Installed icons will appear after restarting you system.
   3. "vst3" - Install/Uninstall VST3 Plugin Package to PREFIX_PATH/lib/vst3
   4. "lv2" - Install/Uninstall LV2 Plugin Package to PREFIX_PATH/lib/lv2
   5. "uninstall" - Set Uninstall Mode

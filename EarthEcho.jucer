@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="rL7HNS" name="EarthEcho" projectType="audioplug" addUsingNamespaceToJuceHeader="0"
-              displaySplashScreen="1" jucerFormatVersion="1" version="0.9"
+              displaySplashScreen="0" jucerFormatVersion="1" version="0.9"
               companyName="Kenta Ishii" companyEmail="info@jimmykenmerchant.com"
               companyWebsite="https://jimmykenmerchant.com" companyCopyright="Copyright &#169; 2022 Kenta Ishii. All Rights Reserved."
               useAppConfig="0" pluginFormats="buildStandalone,buildVST3" pluginManufacturerCode="Jken"

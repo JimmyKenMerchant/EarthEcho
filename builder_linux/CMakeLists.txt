@@ -37,7 +37,7 @@ juce_add_plugin(${PLUGIN_NAME}
   PLUGIN_CODE "Eech"
   FORMATS ${PLUGIN_FORMATS}
   LV2_URI "https://jimmykenmerchant.com"
-  DESCRIPTION "Echo simulator on the earth"
+  DESCRIPTION "The Echo to Emulate Nature"
 )
 
 juce_generate_juce_header(${PLUGIN_NAME})
@@ -46,8 +46,8 @@ target_compile_definitions(${PLUGIN_NAME}
   PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
-    JUCE_DISPLAY_SPLASH_SCREEN=1
-    JUCE_USE_DARK_SPLASH_SCREEN=1
+    JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_USE_DARK_SPLASH_SCREEN=0
     JUCE_REPORT_APP_USAGE=0
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_STRICT_REFCOUNTEDPOINTER=1
