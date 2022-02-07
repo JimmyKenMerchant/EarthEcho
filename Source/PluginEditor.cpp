@@ -88,15 +88,15 @@ void EarthEchoAudioProcessorEditor::resized()
     //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getY()));
     //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getWidth()));
     //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getHeight()));
-    auto leftCornerX = (unsigned int) getLocalBounds().getX();
-    auto leftCornerY = (unsigned int) getLocalBounds().getY();
-    auto sliderWidth = (unsigned int) ((float) getLocalBounds().getWidth() / 6.0f);
-    auto sliderHeight = (unsigned int) (3.0f * ((float) getLocalBounds().getHeight() / 4.0f));
-    auto labelHeight =  (unsigned int) getLocalBounds().getHeight() - sliderHeight;
+    auto leftCornerX = (int) getLocalBounds().getX();
+    auto leftCornerY = (int) getLocalBounds().getY();
+    auto sliderWidth = (int) ((float) getLocalBounds().getWidth() / (float) arraySlider.size());
+    auto sliderHeight = (int) (3.0f * ((float) getLocalBounds().getHeight() / 4.0f));
+    auto labelHeight =  (int) getLocalBounds().getHeight() - sliderHeight;
     for (unsigned int i = 0; i < arraySlider.size(); i++)
     {
-        arraySlider[i].setBounds (leftCornerX + (sliderWidth * i), leftCornerY, sliderWidth, sliderHeight);
-        arrayLabel[i].setBounds (leftCornerX + (sliderWidth * i), leftCornerY + sliderHeight, sliderWidth, labelHeight);
+        arraySlider[i].setBounds (leftCornerX + (sliderWidth * (int) i), leftCornerY, sliderWidth, sliderHeight);
+        arrayLabel[i].setBounds (leftCornerX + (sliderWidth * (int) i), leftCornerY + sliderHeight, sliderWidth, labelHeight);
     }
 }
 
