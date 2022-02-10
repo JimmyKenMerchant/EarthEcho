@@ -141,9 +141,6 @@ void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
 void EarthEchoAudioProcessor::releaseResources()
 {
-    // Free Allocated Memory after playback
-    arrayDelay[0].clear();
-    arrayDelay[1].clear();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations

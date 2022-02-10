@@ -27,14 +27,11 @@ extern _earthEchoSliderParameters earthEchoSliderParameters[];
 
 //==============================================================================
 EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size())
+    : AudioProcessorEditor (&p), audioProcessor (p), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), processorParameters(audioProcessor.getParameters())
 {
     // Set the size of this GUI before the end of this constructor.
     setSize (600, 400);
-    processorParameters = audioProcessor.getParameters();
-    audioProcessor.addListener(this);
     //juce::Logger::getCurrentLogger()->writeToLog (String (arraySlider.size()));
-
     for (unsigned int i = 0; i < arraySlider.size(); i++)
     {
         addAndMakeVisible (&arraySlider[i]);
@@ -60,12 +57,15 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
         arrayLabel[i].setColour (juce::Label::textColourId, juce::Colours::yellow);
         arrayLabel[i].setColour (juce::Label::outlineColourId, juce::Colour (0x00000000));
     }
+    audioProcessor.addListener(this);
 }
 
 EarthEchoAudioProcessorEditor::~EarthEchoAudioProcessorEditor()
 {
-    arraySlider.clear();
-    arrayLabel.clear();
+    // audioProcessor is the reference of EarthEchoAudioProcessor that is alive even after destructing this class.
+    // If you don't remove a listener. The registration of the listener in EarthEchoAudioProcessor will be left.
+    // Caution that the left listener causes a segmentation fault.
+    audioProcessor.removeListener(this);
 }
 
 //==============================================================================
