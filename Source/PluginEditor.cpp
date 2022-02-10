@@ -27,7 +27,7 @@ extern _earthEchoSliderParameters earthEchoSliderParameters[];
 
 //==============================================================================
 EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), processorParameters(audioProcessor.getParameters())
+    : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size())
 {
     // Set the size of this GUI before the end of this constructor.
     setSize (600, 400);
