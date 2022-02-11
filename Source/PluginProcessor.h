@@ -24,7 +24,8 @@
 
 #include <JuceHeader.h>
 
-#define EARTHECHO_NUMBER_PARAMETERS 6
+#define EARTHECHO_NUMBER_PARAMETERS 12
+#define EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL 6
 #define EARTHECHO_VERSION ((String) "v0.9")
 
 typedef struct EarthEcho_earthEchoSliderParameters

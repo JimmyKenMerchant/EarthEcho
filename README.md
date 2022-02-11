@@ -1,24 +1,28 @@
 # EarthEcho
 
-![Graphical User Interface of EarthEcho](/resources/images/earthecho_gui.png "EarthEcho_GUI")
+![Graphical User Interface of EarthEcho in Development](/resources/images/earthecho_gui.png "EarthEcho_GUI")
 
 ## What's EarthEcho?
 
 * EarthEcho is an audio plugin made with [JUCE framework](https://github.com/juce-framework/JUCE).
 
-* EarthEcho makes an echo effect on each channel (e.g., left, right, etc.) with various sliders to emulate nature.
+* EarthEcho makes an echo effect on each channel (left = L or right = R) with various sliders to emulate nature.
 
 * EarthEcho has a retro computing style graphic user interface.
 
 ## Usage
 
-* There are 6 sliders.
-  1. 'Wet Gain': Changes the volume of the wet (effected sound).
-  2. 'Dry/Wet': Changes the mix rate of the dry (non-effected sound) and the wet.
-  3. 'Delay Time': Changes the delay time up to 1 second.
-  4. 'Repeat Rate': Changes the repeating time of the echo (feedbacking sound).
-  5. 'LP Filter': Changes frequency of the low-pass filter effected on the echo.
-  6. 'HP Filter': Changes frequency of the high-pass filter effected on the echo.
+* There are 6 sliders for each channel (L or R).
+  * 'Wet Gain': Changes the volume of the wet (effected sound).
+  * 'Dry/Wet': Changes the mix rate of the dry (non-effected sound) and the wet.
+  * 'Delay Time': Changes the delay time up to 1 second.
+  * 'Repeat Rate': Changes the repeating time of the echo (feedbacking sound).
+  * 'LP Filter': Changes frequency of the low-pass filter effected on the echo.
+  * 'HP Filter': Changes frequency of the high-pass filter effected on the echo.
+
+* There are 2 buttons.
+  * 'BGCOLOR': Changes the background color of the GUI.
+  * 'L/R': Changes displaying parameters for each channel.
 
 ## Installation
 

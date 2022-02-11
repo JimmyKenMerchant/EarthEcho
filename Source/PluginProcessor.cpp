@@ -25,12 +25,18 @@
 
 _earthEchoSliderParameters earthEchoSliderParameters[EARTHECHO_NUMBER_PARAMETERS] =
 {
-    {"wetgain", "Wet Gain", {0.0f, 1.0f, 0.00125f}, 0.125f, " Gain", 8.0f},
-    {"drywet", "Dry/Wet", {0.0f, 1.0f, 0.01f}, 0.5f, " Wet", 1.0f},
-    {"delay", "Delay Time", {0.0f, 1.0f, 0.01f}, 0.5f, " Seconds", 1.0f},
-    {"repeat", "Repeat Rate", {0.0f, 1.0f, 0.01f}, 0.5f, " Repeats", 1.0f},
-    {"lowpass", "LP Filter", {0.0f, 1.0f, 0.01f}, 1.0f, " High Freq.", 1.0f},
-    {"highpass", "HP Filter", {0.0f, 1.0f, 0.01f}, 0.0f, " High Freq.", 1.0f}
+    {"wetgain_l", "Wet Gain L", {0.0f, 1.0f, 0.00125f}, 0.125f, " Gain", 8.0f},
+    {"drywet_l", "Dry/Wet L", {0.0f, 1.0f, 0.01f}, 0.5f, " Wet", 1.0f},
+    {"delay_l", "Delay Time L", {0.0f, 1.0f, 0.01f}, 0.5f, " Seconds", 1.0f},
+    {"repeat_l", "Repeat Rate L", {0.0f, 1.0f, 0.01f}, 0.5f, " Repeats", 1.0f},
+    {"lowpass_l", "LP Filter L", {0.0f, 1.0f, 0.01f}, 1.0f, " High Freq.", 1.0f},
+    {"highpass_l", "HP Filter L", {0.0f, 1.0f, 0.01f}, 0.0f, " High Freq.", 1.0f},
+    {"wetgain_r", "Wet Gain R", {0.0f, 1.0f, 0.00125f}, 0.125f, " Gain", 8.0f},
+    {"drywet_r", "Dry/Wet R", {0.0f, 1.0f, 0.01f}, 0.5f, " Wet", 1.0f},
+    {"delay_r", "Delay Time R", {0.0f, 1.0f, 0.01f}, 0.5f, " Seconds", 1.0f},
+    {"repeat_r", "Repeat Rate R", {0.0f, 1.0f, 0.01f}, 0.5f, " Repeats", 1.0f},
+    {"lowpass_r", "LP Filter R", {0.0f, 1.0f, 0.01f}, 1.0f, " High Freq.", 1.0f},
+    {"highpass_r", "HP Filter R", {0.0f, 1.0f, 0.01f}, 0.0f, " High Freq.", 1.0f}
 };
 
 //==============================================================================
@@ -126,12 +132,15 @@ void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     // Initialization before Playback
     //juce::Logger::getCurrentLogger()->writeToLog (String (sampleRate, 5));
     //juce::Logger::getCurrentLogger()->writeToLog (String ((int) sampleRate));
-    for (unsigned int i = 0; i < 4; i++)
-        arrayMovingAverage.push_back (0);
-    for (unsigned int i = 0; i < 2; i++)
-        arrayPlayBackSampleCount.push_back (0);
     playBackSampleRate = (unsigned int) sampleRate;
-    for (unsigned int i = 0; i < 2; i++)
+    // Moving Average for Low-pass Filter and High-pass Filter for Each Channel
+    for (unsigned int i = 0; i < (unsigned int) getTotalNumInputChannels() * 2; i++)
+        arrayMovingAverage.push_back (0);
+    // Set Zero to Counter of Samples for Each Channel
+    for (unsigned int i = 0; i < (unsigned int) getTotalNumInputChannels(); i++)
+        arrayPlayBackSampleCount.push_back (0);
+    // Make Memory Space to Store Delay Sound for Each Channel
+    for (unsigned int i = 0; i < (unsigned int) getTotalNumInputChannels(); i++)
     {
         std::vector<float> channel (playBackSampleRate, 0.0f);
         arrayDelay.push_back (channel);
@@ -181,7 +190,7 @@ void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         {
             // Input
             auto currentData = inputData[j];
-            auto delayIndex = (unsigned int) ((float) (playBackSampleRate - 1) * arrayParameter[EarthEchoDelay]->get());
+            auto delayIndex = (unsigned int) ((float) (playBackSampleRate - 1) * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoDelay]->get());
             // Mix
             float mixData;
             if (delayIndex == 0)
@@ -190,19 +199,19 @@ void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             }
             else
             {
-                mixData = ((arrayDelay[i][(((unsigned int) arrayPlayBackSampleCount[i] + playBackSampleRate) - delayIndex) % (playBackSampleRate)]) * arrayParameter[EarthEchoRepeat]->get()) + (currentData * (1.0f - arrayParameter[EarthEchoRepeat]->get()));
+                mixData = ((arrayDelay[i][(((unsigned int) arrayPlayBackSampleCount[i] + playBackSampleRate) - delayIndex) % (playBackSampleRate)]) * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoRepeat]->get()) + (currentData * (1.0f - arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoRepeat]->get()));
             }
             arrayDelay[i][arrayPlayBackSampleCount[i]] = mixData;
-            // Lowpass Filter
-            arrayMovingAverage[i * 2] -= arrayMovingAverage[i * 2] * arrayParameter[EarthEchoLowpassFilter]->get();
-            arrayMovingAverage[i * 2] += mixData * arrayParameter[EarthEchoLowpassFilter]->get();
+            // Low-pass Filter
+            arrayMovingAverage[i * 2] -= arrayMovingAverage[i * 2] * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoLowpassFilter]->get();
+            arrayMovingAverage[i * 2] += mixData * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoLowpassFilter]->get();
             mixData = arrayMovingAverage[i * 2];
-            // Highpass Filter
-            arrayMovingAverage[i * 2 + 1] -= arrayMovingAverage[i * 2 + 1] * arrayParameter[EarthEchoHighpassFilter]->get();
-            arrayMovingAverage[i * 2 + 1] += mixData * arrayParameter[EarthEchoHighpassFilter]->get();
+            // High-pass Filter
+            arrayMovingAverage[i * 2 + 1] -= arrayMovingAverage[i * 2 + 1] * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoHighpassFilter]->get();
+            arrayMovingAverage[i * 2 + 1] += mixData * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoHighpassFilter]->get();
             mixData = mixData - arrayMovingAverage[i * 2 + 1];
             // Output
-            outputData[j] = ((mixData * arrayParameter[EarthEchoDryWet]->get() * arrayParameter[EarthEchoVolume]->get() * earthEchoSliderParameters[EarthEchoVolume].expander) + (currentData * (1.0f - arrayParameter[EarthEchoDryWet]->get())));
+            outputData[j] = ((mixData * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoDryWet]->get() * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoVolume]->get() * earthEchoSliderParameters[EarthEchoVolume].expander) + (currentData * (1.0f - arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoDryWet]->get())));
             if (++arrayPlayBackSampleCount[i] >= playBackSampleRate)
             {
                 arrayPlayBackSampleCount[i] = 0;

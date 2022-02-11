@@ -29,8 +29,9 @@
 /**
 */
 class EarthEchoAudioProcessorEditor  : public juce::AudioProcessorEditor,
+                                       public juce::AudioProcessorListener,
                                        public juce::Slider::Listener,
-                                       public juce::AudioProcessorListener
+                                       public juce::Button::Listener
 {
 public:
     EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor&);
@@ -39,10 +40,11 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-    void sliderValueChanged (juce::Slider* slider) override;
     // Needed Define All Pure Virtual Functions (Decleared with "=0")
     void audioProcessorParameterChanged (AudioProcessor *processor, int parameterIndex, float newValue) override;
     void audioProcessorChanged (AudioProcessor *processor, const ChangeDetails &details) override;
+    void sliderValueChanged (juce::Slider* slider) override;
+    void buttonClicked (juce::Button* button) override;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -51,8 +53,14 @@ private:
 
     //==============================================================================
     juce::Array<AudioProcessorParameter*> processorParameters;
+    unsigned int numSingleChannelParameters;
     std::vector<juce::Slider> arraySlider;
     std::vector<juce::Label> arrayLabel;
+    juce::Colour bgColour;
+    juce::TextButton buttonChangeBgColour;
+    juce::TextButton buttonChangeChannel;
+    unsigned int stateBgColour;
+    unsigned int stateChannel;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EarthEchoAudioProcessorEditor)
