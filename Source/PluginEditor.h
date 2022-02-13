@@ -47,20 +47,24 @@ public:
     void buttonClicked (juce::Button* button) override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    EarthEchoAudioProcessor& audioProcessor;
-
     //==============================================================================
+    // References the object of AudioProcessor class that created an object of this class.
+    EarthEchoAudioProcessor& audioProcessor;
     juce::Array<AudioProcessorParameter*> processorParameters;
     unsigned int numSingleChannelParameters;
     std::vector<juce::Slider> arraySlider;
     std::vector<juce::Label> arrayLabel;
     juce::Colour bgColour;
+    juce::Colour textColour;
+    juce::Colour thumbColour;
     juce::TextButton buttonChangeBgColour;
     juce::TextButton buttonChangeChannel;
-    unsigned int stateBgColour;
+    unsigned int stateColourTheme;
     unsigned int stateChannel;
+
+    //==============================================================================
+    juce::LookAndFeel_V4 lookAndFeel;
+    void changeLookAndFeel();
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EarthEchoAudioProcessorEditor)

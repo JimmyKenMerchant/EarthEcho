@@ -27,7 +27,7 @@ extern _earthEchoSliderParameters earthEchoSliderParameters[];
 
 //==============================================================================
 EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), bgColour (juce::Colours::blue), stateBgColour (0), stateChannel (0)
+    : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), bgColour (juce::Colours::blue), textColour (juce::Colours::yellow), thumbColour (juce::Colours::magenta), stateColourTheme (0), stateChannel (0)
 {
     // Set the size of this GUI before the end of this constructor.
     setSize (600, 400);
@@ -35,46 +35,25 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
     for (unsigned int i = 0; i < arraySlider.size(); i++)
     {
         arraySlider[i].setSliderStyle (juce::Slider::LinearVertical);
-        arraySlider[i].setTextBoxStyle (juce::Slider::TextBoxBelow, true, 80, 20);
+        arraySlider[i].setTextBoxStyle (juce::Slider::TextBoxBelow, false, 80, 20); // No read-only = setTextBoxIsEditable (true)
         arraySlider[i].setTextValueSuffix (processorParameters[i]->getLabel());
         arraySlider[i].setRange (earthEchoSliderParameters[i].range.start, earthEchoSliderParameters[i].range.end * earthEchoSliderParameters[i].expander);
         arraySlider[i].setValue (processorParameters[i]->getValue() * earthEchoSliderParameters[i].expander);
         arraySlider[i].setNumDecimalPlacesToDisplay (2);
-        arraySlider[i].setTextBoxIsEditable (true);
-        arraySlider[i].setColour (juce::Slider::backgroundColourId, juce::Colour (0x00000000));
-        arraySlider[i].setColour (juce::Slider::thumbColourId, juce::Colours::magenta);
-        arraySlider[i].setColour (juce::Slider::trackColourId, juce::Colours::yellow);
-        arraySlider[i].setColour (juce::Slider::textBoxTextColourId, juce::Colours::yellow);
-        arraySlider[i].setColour (juce::Slider::textBoxBackgroundColourId, juce::Colour (0x00000000));
-        arraySlider[i].setColour (juce::Slider::textBoxHighlightColourId, juce::Colours::yellow);
-        arraySlider[i].setColour (juce::Slider::textBoxOutlineColourId, juce::Colours::yellow);
         arraySlider[i].addListener (this);
         addChildComponent (&arraySlider[i]);
-
         arrayLabel[i].setJustificationType (juce::Justification::centred);
         arrayLabel[i].setText (processorParameters[i]->getName (20), juce::dontSendNotification);
-        arrayLabel[i].setColour (juce::Label::backgroundColourId, juce::Colour (0x00000000));
-        arrayLabel[i].setColour (juce::Label::textColourId, juce::Colours::yellow);
-        arrayLabel[i].setColour (juce::Label::outlineColourId, juce::Colour (0x00000000));
         addChildComponent (&arrayLabel[i]);
     }
     buttonChangeBgColour.setButtonText ("BGCOLOR");
-    buttonChangeBgColour.setColour (juce::TextButton::buttonColourId, juce::Colour (0x00000000));
-    buttonChangeBgColour.setColour (juce::TextButton::buttonOnColourId, juce::Colours::white);
-    buttonChangeBgColour.setColour (juce::TextButton::textColourOffId, juce::Colours::yellow);
-    buttonChangeBgColour.setColour (juce::TextButton::textColourOnId, juce::Colours::magenta);
-    buttonChangeBgColour.setColour (juce::ComboBox::outlineColourId, juce::Colours::yellow);
     buttonChangeBgColour.addListener (this);
     addAndMakeVisible (&buttonChangeBgColour);
     buttonChangeChannel.setButtonText ("L/R");
-    buttonChangeChannel.setColour (juce::TextButton::buttonColourId, juce::Colour (0x00000000));
-    buttonChangeChannel.setColour (juce::TextButton::buttonOnColourId, juce::Colours::white);
-    buttonChangeChannel.setColour (juce::TextButton::textColourOffId, juce::Colours::yellow);
-    buttonChangeChannel.setColour (juce::TextButton::textColourOnId, juce::Colours::magenta);
-    buttonChangeChannel.setColour (juce::ComboBox::outlineColourId, juce::Colours::yellow);
     buttonChangeChannel.addListener (this);
     addAndMakeVisible (&buttonChangeChannel);
     audioProcessor.addListener (this);
+    changeLookAndFeel();
 }
 
 EarthEchoAudioProcessorEditor::~EarthEchoAudioProcessorEditor()
@@ -93,7 +72,7 @@ void EarthEchoAudioProcessorEditor::paint (juce::Graphics& g)
 
     // Unique Settings on Background of GUI
     // Set Text Colour
-    g.setColour (juce::Colours::yellow);
+    g.setColour (textColour);
     g.setFont (16.0f);
     g.drawFittedText (String ("EarthEcho") + newLine + EARTHECHO_VERSION, getLocalBounds(), juce::Justification::centred, 1);
 }
@@ -158,22 +137,36 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
 {
     if (button == &buttonChangeBgColour)
     {
-        if (stateBgColour == 0)
+        if (stateColourTheme == 0)
         {
             bgColour = juce::Colours::black;
-            stateBgColour = 1;
+            textColour = juce::Colours::yellow;
+            thumbColour = juce::Colours::magenta;
+            stateColourTheme = 1;
         }
-        else if (stateBgColour == 1)
+        else if (stateColourTheme == 1)
         {
             bgColour = juce::Colours::coral;
-            stateBgColour = 2;
+            textColour = juce::Colours::white;
+            thumbColour = juce::Colours::cadetblue;
+            stateColourTheme = 2;
         }
-        else if (stateBgColour == 2)
+        else if (stateColourTheme == 2)
+        {
+            bgColour = juce::Colours::cadetblue;
+            textColour = juce::Colours::darkolivegreen;
+            thumbColour = juce::Colours::white;
+            stateColourTheme = 3;
+        }
+        else if (stateColourTheme == 3)
         {
             bgColour = juce::Colours::blue;
-            stateBgColour = 0;
+            textColour = juce::Colours::yellow;
+            thumbColour = juce::Colours::magenta;
+            stateColourTheme = 0;
         }
         repaint();
+        changeLookAndFeel();
     }
     else if (button == &buttonChangeChannel)
     {
@@ -199,4 +192,32 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
             }
         }
     }
+}
+
+void EarthEchoAudioProcessorEditor::changeLookAndFeel()
+{
+    // Set Colors
+    lookAndFeel.setColour (juce::Slider::backgroundColourId, juce::Colour (0x00000000));
+    lookAndFeel.setColour (juce::Slider::thumbColourId, thumbColour);
+    lookAndFeel.setColour (juce::Slider::trackColourId, textColour);
+    lookAndFeel.setColour (juce::Slider::textBoxTextColourId, textColour);
+    lookAndFeel.setColour (juce::Slider::textBoxBackgroundColourId, juce::Colour (0x00000000));
+    lookAndFeel.setColour (juce::Slider::textBoxHighlightColourId, textColour);
+    lookAndFeel.setColour (juce::Slider::textBoxOutlineColourId, textColour);
+    lookAndFeel.setColour (juce::Label::backgroundColourId, juce::Colour (0x00000000));
+    lookAndFeel.setColour (juce::Label::textColourId, textColour);
+    lookAndFeel.setColour (juce::Label::outlineColourId, juce::Colour (0x00000000));
+    lookAndFeel.setColour (juce::TextButton::buttonColourId, juce::Colour (0x00000000));
+    lookAndFeel.setColour (juce::TextButton::buttonOnColourId, juce::Colours::white);
+    lookAndFeel.setColour (juce::TextButton::textColourOffId, textColour);
+    lookAndFeel.setColour (juce::TextButton::textColourOnId, juce::Colours::magenta);
+    lookAndFeel.setColour (juce::ComboBox::outlineColourId, textColour);
+    for (unsigned int i = 0; i < arraySlider.size(); i++)
+    {
+        arraySlider[i].setLookAndFeel(&lookAndFeel);
+        arraySlider[i].lookAndFeelChanged(); // To Change Colors for Text Box of Slider
+        arrayLabel[i].setLookAndFeel(&lookAndFeel);
+    }
+    buttonChangeBgColour.setLookAndFeel(&lookAndFeel);
+    buttonChangeChannel.setLookAndFeel(&lookAndFeel);
 }
