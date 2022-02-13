@@ -1,6 +1,6 @@
 # EarthEcho
 
-![Graphical User Interface of EarthEcho in Development](/resources/images/earthecho_gui.png "EarthEcho_GUI")
+![Graphical User Interface of EarthEcho](/resources/images/earthecho_gui.png "EarthEcho_GUI")
 
 ## What's EarthEcho?
 
@@ -23,6 +23,8 @@
 * There are 2 buttons.
   * 'BGCOLOR': Changes the background color of the GUI.
   * 'L/R': Changes displaying parameters for each channel.
+
+* In the convention of the digital audio world, the first audio input/output called as "input/output 1" is for the left channel of a stereo system, and the second one called as "input/output 2" is for the right channel. This plugin follows this convention, and you'll watch numbered inputs and outputs for this plugin in your audio plugin host.
 
 ## Installation
 
