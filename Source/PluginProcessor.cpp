@@ -29,14 +29,14 @@ _earthEchoSliderParameters earthEchoSliderParameters[EARTHECHO_NUMBER_PARAMETERS
     {"drywet_l", "Dry/Wet L", {0.0f, 1.0f, 0.01f}, 0.5f, " Wet", 1.0f},
     {"delay_l", "Delay Time L", {0.0f, 1.0f, 0.01f}, 0.5f, " Seconds", 1.0f},
     {"repeat_l", "Repeat Rate L", {0.0f, 1.0f, 0.01f}, 0.5f, " Repeats", 1.0f},
-    {"lowpass_l", "LP Filter L", {0.0f, 1.0f, 0.01f}, 1.0f, " High Freq.", 1.0f},
-    {"highpass_l", "HP Filter L", {0.0f, 1.0f, 0.01f}, 0.0f, " High Freq.", 1.0f},
+    {"lowpass_l", "LP Filter L", {0.0f, 1.0f, 0.01f}, 1.0f, " Hi-Freq", 1.0f},
+    {"highpass_l", "HP Filter L", {0.0f, 1.0f, 0.01f}, 0.0f, " Hi-Freq", 1.0f},
     {"wetgain_r", "Wet Gain R", {0.0f, 1.0f, 0.00125f}, 0.125f, " Gain", 8.0f},
     {"drywet_r", "Dry/Wet R", {0.0f, 1.0f, 0.01f}, 0.5f, " Wet", 1.0f},
     {"delay_r", "Delay Time R", {0.0f, 1.0f, 0.01f}, 0.5f, " Seconds", 1.0f},
     {"repeat_r", "Repeat Rate R", {0.0f, 1.0f, 0.01f}, 0.5f, " Repeats", 1.0f},
-    {"lowpass_r", "LP Filter R", {0.0f, 1.0f, 0.01f}, 1.0f, " High Freq.", 1.0f},
-    {"highpass_r", "HP Filter R", {0.0f, 1.0f, 0.01f}, 0.0f, " High Freq.", 1.0f}
+    {"lowpass_r", "LP Filter R", {0.0f, 1.0f, 0.01f}, 1.0f, " Hi-Freq", 1.0f},
+    {"highpass_r", "HP Filter R", {0.0f, 1.0f, 0.01f}, 0.0f, " Hi-Freq", 1.0f}
 };
 
 //==============================================================================

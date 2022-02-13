@@ -28,6 +28,23 @@
 //==============================================================================
 /**
 */
+class EarthEchoAudioProcessorEditorCustomLookAndFeel  : public juce::LookAndFeel_V4
+{
+public:
+    EarthEchoAudioProcessorEditorCustomLookAndFeel (juce::Colour bgColour, juce::Colour textColour);
+
+    //==============================================================================
+    void setWindowLookAndFeel (juce::Colour bgColour, juce::Colour textColour);
+    Button* createDocumentWindowButton (int buttonType) override;
+
+private:
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EarthEchoAudioProcessorEditorCustomLookAndFeel)
+};
+
+//==============================================================================
+/**
+*/
 class EarthEchoAudioProcessorEditor  : public juce::AudioProcessorEditor,
                                        public juce::AudioProcessorListener,
                                        public juce::Slider::Listener,
@@ -63,7 +80,7 @@ private:
     unsigned int stateChannel;
 
     //==============================================================================
-    juce::LookAndFeel_V4 lookAndFeel;
+    EarthEchoAudioProcessorEditorCustomLookAndFeel lookAndFeel;
     void changeLookAndFeel();
 
     //==============================================================================

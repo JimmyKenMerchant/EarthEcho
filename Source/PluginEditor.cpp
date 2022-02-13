@@ -26,10 +26,147 @@
 extern _earthEchoSliderParameters earthEchoSliderParameters[];
 
 //==============================================================================
-EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), bgColour (juce::Colours::blue), textColour (juce::Colours::yellow), thumbColour (juce::Colours::magenta), stateColourTheme (0), stateChannel (0)
+
+EarthEchoAudioProcessorEditorCustomLookAndFeel::EarthEchoAudioProcessorEditorCustomLookAndFeel (juce::Colour bgColour, juce::Colour textColour)
 {
+    setWindowLookAndFeel(bgColour, textColour);
+}
+
+void EarthEchoAudioProcessorEditorCustomLookAndFeel::setWindowLookAndFeel (juce::Colour bgColour, juce::Colour textColour)
+{
+    getCurrentColourScheme().setUIColour (ColourScheme::windowBackground, bgColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::widgetBackground, bgColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::menuBackground, bgColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::outline, bgColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::defaultText, textColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::defaultFill, bgColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::highlightedText, textColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::highlightedFill, bgColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::menuText, textColour);
+    getCurrentColourScheme().setUIColour (ColourScheme::numColours, textColour);
+    setColour (juce::ResizableWindow::backgroundColourId, bgColour);
+    setColour (juce::DocumentWindow::textColourId, textColour);
+}
+
+/**
+* Start of the modification of JUCE/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V4.cpp Line No. 109-192 (JUCE version 6.1.5)
+* to override the function, Button* LookAndFeel_V4::createDocumentWindowButton (int buttonType), for changing colors of window buttons.
+* The modification date is February 14, 2022.
+* This code is part of the JUCE library.
+* Copyright (c) 2020 - Raw Material Software Limited
+* This code is used under the terms of the GNU General Public License Version 3 (www.gnu.org/licenses/gpl-3.0).
+*/
+class LookAndFeel_V4_DocumentWindowButton   : public Button
+{
+public:
+// Modification: Removed "Colour c,"
+    LookAndFeel_V4_DocumentWindowButton (const String& name, const Path& normal, const Path& toggled)
+// Modification: Removed "colour (c),"
+        : Button (name), normalShape (normal), toggledShape (toggled)
+    {
+    }
+
+    void paintButton (Graphics& g, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
+    {
+        auto background = Colours::grey;
+// Modification: Added "auto colour = Colours::white;"
+        auto colour = Colours::white;
+        if (auto* rw = findParentComponentOfClass<ResizableWindow>())
+            if (auto lf = dynamic_cast<LookAndFeel_V4*> (&rw->getLookAndFeel()))
+// Modification: Added "{"
+            {
+                background = lf->getCurrentColourScheme().getUIColour (LookAndFeel_V4::ColourScheme::widgetBackground);
+// Modification: Added "colour = lf->getCurrentColourScheme().getUIColour (LookAndFeel_V4::ColourScheme::defaultText);"
+                colour = lf->getCurrentColourScheme().getUIColour (LookAndFeel_V4::ColourScheme::defaultText);
+// Modification: Added "}"
+            }
+
+        g.fillAll (background);
+
+        g.setColour ((! isEnabled() || shouldDrawButtonAsDown) ? colour.withAlpha (0.6f)
+                                                     : colour);
+
+        if (shouldDrawButtonAsHighlighted)
+        {
+            g.fillAll();
+            g.setColour (background);
+        }
+
+        auto& p = getToggleState() ? toggledShape : normalShape;
+
+        auto reducedRect = Justification (Justification::centred)
+                              .appliedToRectangle (Rectangle<int> (getHeight(), getHeight()), getLocalBounds())
+                              .toFloat()
+                              .reduced ((float) getHeight() * 0.3f);
+
+        g.fillPath (p, p.getTransformToScaleToFit (reducedRect, true));
+    }
+
+private:
+// Modification: Removed "Colour colour;"
+    Path normalShape, toggledShape;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LookAndFeel_V4_DocumentWindowButton)
+};
+
+// Modification: "LookAndFeel_V4::createDocumentWindowButton" to "EarthEchoAudioProcessorEditorCustomLookAndFeel::createDocumentWindowButton"
+Button* EarthEchoAudioProcessorEditorCustomLookAndFeel::createDocumentWindowButton (int buttonType)
+{
+    Path shape;
+    auto crossThickness = 0.15f;
+
+    if (buttonType == DocumentWindow::closeButton)
+    {
+        shape.addLineSegment ({ 0.0f, 0.0f, 1.0f, 1.0f }, crossThickness);
+        shape.addLineSegment ({ 1.0f, 0.0f, 0.0f, 1.0f }, crossThickness);
+// Modification: Removed "Colour (0xff9A131D),"
+        return new LookAndFeel_V4_DocumentWindowButton ("close", shape, shape);
+    }
+
+    if (buttonType == DocumentWindow::minimiseButton)
+    {
+        shape.addLineSegment ({ 0.0f, 0.5f, 1.0f, 0.5f }, crossThickness);
+// Modification: Removed "Colour (0xffaa8811),"
+        return new LookAndFeel_V4_DocumentWindowButton ("minimise", shape, shape);
+    }
+
+    if (buttonType == DocumentWindow::maximiseButton)
+    {
+        shape.addLineSegment ({ 0.5f, 0.0f, 0.5f, 1.0f }, crossThickness);
+        shape.addLineSegment ({ 0.0f, 0.5f, 1.0f, 0.5f }, crossThickness);
+
+        Path fullscreenShape;
+        fullscreenShape.startNewSubPath (45.0f, 100.0f);
+        fullscreenShape.lineTo (0.0f, 100.0f);
+        fullscreenShape.lineTo (0.0f, 0.0f);
+        fullscreenShape.lineTo (100.0f, 0.0f);
+        fullscreenShape.lineTo (100.0f, 45.0f);
+        fullscreenShape.addRectangle (45.0f, 45.0f, 100.0f, 100.0f);
+        PathStrokeType (30.0f).createStrokedPath (fullscreenShape, fullscreenShape);
+// Modification: Removed "Colour (0xff0A830A),"
+        return new LookAndFeel_V4_DocumentWindowButton ("maximise", shape, fullscreenShape);
+    }
+
+    jassertfalse;
+    return nullptr;
+}
+/**
+* End of the modification of JUCE/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel_V4.cpp Line No. 153-192 (JUCE version 6.1.5).
+* Copyright (c) 2020 - Raw Material Software Limited
+* This code is used under the terms of the GNU General Public License Version 3 (www.gnu.org/licenses/gpl-3.0).
+*/
+
+//==============================================================================
+EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
+    : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), bgColour (juce::Colours::blue), textColour (juce::Colours::yellow), thumbColour (juce::Colours::magenta), stateColourTheme (0), stateChannel (0), lookAndFeel (bgColour, textColour)
+{
+    // Set Custom Look And Feel Overall
+    LookAndFeel::setDefaultLookAndFeel (&lookAndFeel);
+    if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
+        juce::TopLevelWindow::getTopLevelWindow (0)->setName(EARTHECHO_NAME + String (" ") + EARTHECHO_VERSION);
     // Set the size of this GUI before the end of this constructor.
+    //setResizeLimits(600, 200, 600, 400);
+    //setResizable(true, false);
     setSize (600, 400);
     //juce::Logger::getCurrentLogger()->writeToLog (String (arraySlider.size()));
     for (unsigned int i = 0; i < arraySlider.size(); i++)
@@ -62,6 +199,8 @@ EarthEchoAudioProcessorEditor::~EarthEchoAudioProcessorEditor()
     // If you don't remove a listener. The registration of the listener in EarthEchoAudioProcessor will be left.
     // Caution that the left listener causes a segmentation fault.
     audioProcessor.removeListener (this);
+    // Ensure to Reset Look and Feel
+    LookAndFeel::setDefaultLookAndFeel (nullptr);
 }
 
 //==============================================================================
@@ -74,7 +213,7 @@ void EarthEchoAudioProcessorEditor::paint (juce::Graphics& g)
     // Set Text Colour
     g.setColour (textColour);
     g.setFont (16.0f);
-    g.drawFittedText (String ("EarthEcho") + newLine + EARTHECHO_VERSION, getLocalBounds(), juce::Justification::centred, 1);
+    g.drawFittedText (EARTHECHO_NAME + newLine + EARTHECHO_VERSION, getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void EarthEchoAudioProcessorEditor::resized()
@@ -165,8 +304,10 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
             thumbColour = juce::Colours::magenta;
             stateColourTheme = 0;
         }
-        repaint();
         changeLookAndFeel();
+        repaint();
+        if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
+            juce::TopLevelWindow::getTopLevelWindow (0)->repaint(); // Update Colors for Title Bar
     }
     else if (button == &buttonChangeChannel)
     {
@@ -192,6 +333,7 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
             }
         }
     }
+    button->giveAwayKeyboardFocus(); // Unfocus to Hide to Darken Button Color after Clicking
 }
 
 void EarthEchoAudioProcessorEditor::changeLookAndFeel()
@@ -204,20 +346,21 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
     lookAndFeel.setColour (juce::Slider::textBoxBackgroundColourId, juce::Colour (0x00000000));
     lookAndFeel.setColour (juce::Slider::textBoxHighlightColourId, textColour);
     lookAndFeel.setColour (juce::Slider::textBoxOutlineColourId, textColour);
+    lookAndFeel.setColour (juce::TextEditor::highlightedTextColourId, bgColour);// Also Effects Text Box of Slider
     lookAndFeel.setColour (juce::Label::backgroundColourId, juce::Colour (0x00000000));
     lookAndFeel.setColour (juce::Label::textColourId, textColour);
     lookAndFeel.setColour (juce::Label::outlineColourId, juce::Colour (0x00000000));
-    lookAndFeel.setColour (juce::TextButton::buttonColourId, juce::Colour (0x00000000));
-    lookAndFeel.setColour (juce::TextButton::buttonOnColourId, juce::Colours::white);
-    lookAndFeel.setColour (juce::TextButton::textColourOffId, textColour);
-    lookAndFeel.setColour (juce::TextButton::textColourOnId, juce::Colours::magenta);
-    lookAndFeel.setColour (juce::ComboBox::outlineColourId, textColour);
+    lookAndFeel.setColour (juce::Label::backgroundWhenEditingColourId, bgColour); // Also Effects Text Box of Slider
+    lookAndFeel.setColour (juce::Label::textWhenEditingColourId, textColour); // Also Effects Text Box of Slider
+    lookAndFeel.setColour (juce::Label::outlineWhenEditingColourId, textColour); // Also Effects Text Box of Slider
+    lookAndFeel.setColour (juce::TextButton::buttonColourId, bgColour);
+    lookAndFeel.setColour (juce::TextButton::buttonOnColourId, bgColour); // juce::Button::setToggleState
+    lookAndFeel.setColour (juce::TextButton::textColourOffId, textColour); // juce::Button::setToggleState
+    lookAndFeel.setColour (juce::TextButton::textColourOnId, textColour); // juce::Button::setToggleState
+    lookAndFeel.setColour (juce::ComboBox::outlineColourId, textColour); // Also Outline of juce::TextButton
     for (unsigned int i = 0; i < arraySlider.size(); i++)
     {
-        arraySlider[i].setLookAndFeel(&lookAndFeel);
         arraySlider[i].lookAndFeelChanged(); // To Change Colors for Text Box of Slider
-        arrayLabel[i].setLookAndFeel(&lookAndFeel);
     }
-    buttonChangeBgColour.setLookAndFeel(&lookAndFeel);
-    buttonChangeChannel.setLookAndFeel(&lookAndFeel);
+    lookAndFeel.setWindowLookAndFeel (bgColour, textColour);
 }
