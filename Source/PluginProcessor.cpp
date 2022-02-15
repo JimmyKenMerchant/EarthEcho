@@ -113,21 +113,21 @@ int EarthEchoAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void EarthEchoAudioProcessor::setCurrentProgram (int index)
+void EarthEchoAudioProcessor::setCurrentProgram (int /*index*/)
 {
 }
 
-const juce::String EarthEchoAudioProcessor::getProgramName (int index)
+const juce::String EarthEchoAudioProcessor::getProgramName (int /*index*/)
 {
     return {};
 }
 
-void EarthEchoAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void EarthEchoAudioProcessor::changeProgramName (int /*index*/, const juce::String& /*newName*/)
 {
 }
 
 //==============================================================================
-void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int /*samplesPerBlock*/)
 {
     // Initialization before Playback
     //juce::Logger::getCurrentLogger()->writeToLog (String (sampleRate, 5));
@@ -175,7 +175,7 @@ bool EarthEchoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = (unsigned int) getTotalNumInputChannels();

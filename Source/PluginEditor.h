@@ -36,6 +36,10 @@ public:
     //==============================================================================
     void setWindowLookAndFeel (juce::Colour bgColour, juce::Colour textColour);
     Button* createDocumentWindowButton (int buttonType) override;
+    void drawCornerResizer (Graphics&, int w, int h, bool isMouseOver, bool isMouseDragging) override;
+    void drawResizableFrame (Graphics&, int w, int h, const BorderSize<int>&) override;
+    void fillResizableWindowBackground (Graphics&, int w, int h, const BorderSize<int>&, ResizableWindow&) override;
+    void drawResizableWindowBorder (Graphics&, int w, int h, const BorderSize<int>&, ResizableWindow&) override;
 
 private:
     //==============================================================================
@@ -58,8 +62,8 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
     // Needed Define All Pure Virtual Functions (Decleared with "=0")
-    void audioProcessorParameterChanged (AudioProcessor *processor, int parameterIndex, float newValue) override;
-    void audioProcessorChanged (AudioProcessor *processor, const ChangeDetails &details) override;
+    void audioProcessorParameterChanged (AudioProcessor* processor, int parameterIndex, float newValue) override;
+    void audioProcessorChanged (AudioProcessor* processor, const ChangeDetails& details) override;
     void sliderValueChanged (juce::Slider* slider) override;
     void buttonClicked (juce::Button* button) override;
 

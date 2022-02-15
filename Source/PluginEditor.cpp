@@ -156,17 +156,48 @@ Button* EarthEchoAudioProcessorEditorCustomLookAndFeel::createDocumentWindowButt
 * This code is used under the terms of the GNU General Public License Version 3 (www.gnu.org/licenses/gpl-3.0).
 */
 
+void EarthEchoAudioProcessorEditorCustomLookAndFeel::drawCornerResizer (Graphics&, int /*w*/, int /*h*/, bool /*isMouseOver*/, bool /*isMouseDragging*/)
+{
+}
+
+void EarthEchoAudioProcessorEditorCustomLookAndFeel::drawResizableFrame (Graphics&, int /*w*/, int /*h*/, const BorderSize<int>&)
+{
+}
+
+void EarthEchoAudioProcessorEditorCustomLookAndFeel::fillResizableWindowBackground (Graphics& g, int w, int h, const BorderSize<int>&, ResizableWindow&)
+{
+    g.fillAll (findColour (juce::ResizableWindow::backgroundColourId));
+    juce::Rectangle<int> windowBorder(0, 0, w, h);
+    g.setColour (getCurrentColourScheme().getUIColour (ColourScheme::defaultText));
+    g.drawRect (windowBorder, 1);
+}
+
+void EarthEchoAudioProcessorEditorCustomLookAndFeel::drawResizableWindowBorder (Graphics&, int /*w*/, int /*h*/, const BorderSize<int>&, ResizableWindow&)
+{
+}
+
 //==============================================================================
 EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), bgColour (juce::Colours::blue), textColour (juce::Colours::yellow), thumbColour (juce::Colours::magenta), stateColourTheme (0), stateChannel (0), lookAndFeel (bgColour, textColour)
 {
-    // Set Custom Look And Feel Overall
-    LookAndFeel::setDefaultLookAndFeel (&lookAndFeel);
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
-        juce::TopLevelWindow::getTopLevelWindow (0)->setName(EARTHECHO_NAME + String (" ") + EARTHECHO_VERSION);
+    {
+        Rectangle<int> userAreaOfDisplay = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
+        std::vector<int> sizesOnWindow = {400, 200, userAreaOfDisplay.getWidth(), userAreaOfDisplay.getHeight()};
+        // Plugin Holder
+        auto* toplevelDocumentWindow = dynamic_cast<DocumentWindow*> (juce::TopLevelWindow::getTopLevelWindow (0));
+        toplevelDocumentWindow->setName(EARTHECHO_NAME + String (" ") + EARTHECHO_VERSION);
+        toplevelDocumentWindow->setTitleBarButtonsRequired(DocumentWindow::allButtons, false);
+        toplevelDocumentWindow->setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
+        toplevelDocumentWindow->setResizable(true, false);
+        toplevelDocumentWindow->setLookAndFeel (&lookAndFeel);
+        // Plugin Panel
+        setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
+        setResizable(true, false);
+    } else {
+        setLookAndFeel (&lookAndFeel);
+    }
     // Set the size of this GUI before the end of this constructor.
-    //setResizeLimits(600, 200, 600, 400);
-    //setResizable(true, false);
     setSize (600, 400);
     //juce::Logger::getCurrentLogger()->writeToLog (String (arraySlider.size()));
     for (unsigned int i = 0; i < arraySlider.size(); i++)
@@ -199,8 +230,6 @@ EarthEchoAudioProcessorEditor::~EarthEchoAudioProcessorEditor()
     // If you don't remove a listener. The registration of the listener in EarthEchoAudioProcessor will be left.
     // Caution that the left listener causes a segmentation fault.
     audioProcessor.removeListener (this);
-    // Ensure to Reset Look and Feel
-    LookAndFeel::setDefaultLookAndFeel (nullptr);
 }
 
 //==============================================================================
@@ -249,13 +278,13 @@ void EarthEchoAudioProcessorEditor::resized()
     buttonChangeChannel.setBounds (leftCornerX + (sliderWidth * (int) (numSingleChannelParameters - 2)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
 }
 
-void EarthEchoAudioProcessorEditor::audioProcessorParameterChanged (AudioProcessor *processorParameterChanged, int parameterIndex, float newValue)
+void EarthEchoAudioProcessorEditor::audioProcessorParameterChanged (AudioProcessor* /*processor*/, int parameterIndex, float newValue)
 {
     //juce::Logger::getCurrentLogger()->writeToLog (String ("EarthEchoAudioProcessorEditor::audioProcessorParameterChanged"));
     arraySlider[(unsigned int) parameterIndex].setValue (newValue * earthEchoSliderParameters[(unsigned int) parameterIndex].expander);
 }
 
-void EarthEchoAudioProcessorEditor::audioProcessorChanged (AudioProcessor *processorChanged, const ChangeDetails &details)
+void EarthEchoAudioProcessorEditor::audioProcessorChanged (AudioProcessor* /*processor*/, const ChangeDetails& /*details*/)
 {
     //juce::Logger::getCurrentLogger()->writeToLog (String ("EarthEchoAudioProcessorEditor::audioProcessorChanged"));
 }

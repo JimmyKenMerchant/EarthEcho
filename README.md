@@ -42,6 +42,10 @@ cd EarthEcho/builder_linux
 
 * I haven't made it with AU format. I leave the XML file for Projucer, and you can customize settings to make an AU plugin on Projucer.
 
+## Technical Notes
+
+* 02/15/2022: 6.1.5-lv2 seems to make no sound on LV2 plugin format. Checkout to 6.1.4-lv2.
+
 ## License
 
 * Code: [GNU GENERAL PUBLIC LICENSE Version 3](https://www.gnu.org/licenses/gpl-3.0.en.html)
