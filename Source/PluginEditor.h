@@ -36,10 +36,10 @@ public:
     //==============================================================================
     void setWindowLookAndFeel (juce::Colour bgColour, juce::Colour textColour);
     Button* createDocumentWindowButton (int buttonType) override;
-    void drawCornerResizer (Graphics&, int w, int h, bool isMouseOver, bool isMouseDragging) override;
+    // Override Function in juce::LookAndFeel_V2 for Custom Window Border
     void drawResizableFrame (Graphics&, int w, int h, const BorderSize<int>&) override;
+    // Override Function in juce::LookAndFeel_V2 for Custom Window Border
     void fillResizableWindowBackground (Graphics&, int w, int h, const BorderSize<int>&, ResizableWindow&) override;
-    void drawResizableWindowBorder (Graphics&, int w, int h, const BorderSize<int>&, ResizableWindow&) override;
 
 private:
     //==============================================================================

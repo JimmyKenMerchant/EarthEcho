@@ -156,10 +156,6 @@ Button* EarthEchoAudioProcessorEditorCustomLookAndFeel::createDocumentWindowButt
 * This code is used under the terms of the GNU General Public License Version 3 (www.gnu.org/licenses/gpl-3.0).
 */
 
-void EarthEchoAudioProcessorEditorCustomLookAndFeel::drawCornerResizer (Graphics&, int /*w*/, int /*h*/, bool /*isMouseOver*/, bool /*isMouseDragging*/)
-{
-}
-
 void EarthEchoAudioProcessorEditorCustomLookAndFeel::drawResizableFrame (Graphics&, int /*w*/, int /*h*/, const BorderSize<int>&)
 {
 }
@@ -170,10 +166,6 @@ void EarthEchoAudioProcessorEditorCustomLookAndFeel::fillResizableWindowBackgrou
     juce::Rectangle<int> windowBorder(0, 0, w, h);
     g.setColour (getCurrentColourScheme().getUIColour (ColourScheme::defaultText));
     g.drawRect (windowBorder, 1);
-}
-
-void EarthEchoAudioProcessorEditorCustomLookAndFeel::drawResizableWindowBorder (Graphics&, int /*w*/, int /*h*/, const BorderSize<int>&, ResizableWindow&)
-{
 }
 
 //==============================================================================
@@ -334,9 +326,14 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
             stateColourTheme = 0;
         }
         changeLookAndFeel();
-        repaint();
         if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
+        {
             juce::TopLevelWindow::getTopLevelWindow (0)->repaint(); // Update Colors for Title Bar
+        }
+        else
+        {
+            repaint();
+        }
     }
     else if (button == &buttonChangeChannel)
     {
