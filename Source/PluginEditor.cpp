@@ -187,9 +187,8 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
         // Plugin Panel
         setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
         setResizable(true, false);
-    } else {
-        setLookAndFeel (&lookAndFeel);
     }
+    setLookAndFeel (&lookAndFeel);
     // Set the size of this GUI before the end of this constructor.
     setSize (600, 400);
     //juce::Logger::getCurrentLogger()->writeToLog (String (arraySlider.size()));
