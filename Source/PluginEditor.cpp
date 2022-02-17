@@ -172,6 +172,7 @@ void EarthEchoAudioProcessorEditorCustomLookAndFeel::fillResizableWindowBackgrou
 EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), bgColour (juce::Colours::blue), textColour (juce::Colours::yellow), thumbColour (juce::Colours::magenta), stateColourTheme (0), stateChannel (0), lookAndFeel (bgColour, textColour)
 {
+    juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + String (audioProcessor.getName()));
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
     {
         Rectangle<int> userAreaOfDisplay = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
