@@ -44,6 +44,7 @@ juce_generate_juce_header(${PLUGIN_NAME})
 
 target_compile_definitions(${PLUGIN_NAME}
   PUBLIC
+    JUCE_JACK=1
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_DISPLAY_SPLASH_SCREEN=0
