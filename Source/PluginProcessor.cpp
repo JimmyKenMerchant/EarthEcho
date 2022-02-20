@@ -146,6 +146,18 @@ void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int /*samplesPer
         arrayDelay.push_back (channel);
         juce::Logger::getCurrentLogger()->writeToLog ("Sample rate of channel " + String (i) + " is " + String (arrayDelay[i].size()) + "Hz.");
     }
+    if (wrapperType == AudioProcessor::wrapperType_Standalone)
+    {
+        juce::StringArray earthEchoArguments = juce::JUCEApplication::getInstance()->getCommandLineParameterArray();
+        juce::File path (File::getCurrentWorkingDirectory().getFullPathName() + File::getSeparatorString() + earthEchoArguments[0]);
+        if (path.existsAsFile())
+        {
+            juce::Logger::getCurrentLogger()->writeToLog (String ("Loading Parameter File..."));
+            juce::MemoryBlock savedData;
+            if (path.loadFileAsData (savedData))
+                setStateInformation (savedData.getData(), static_cast<int> (savedData.getSize()));
+        }
+    }
 }
 
 void EarthEchoAudioProcessor::releaseResources()

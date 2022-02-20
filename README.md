@@ -12,7 +12,7 @@
 
 ## Usage
 
-* There are 6 sliders for each channel (L or R).
+* There are 6 sliders for each channel (L or R) to change parameter values.
   * 'Wet Gain': Changes the volume of the wet (effected sound).
   * 'Dry/Wet': Changes the mix rate of the dry (non-effected sound) and the wet.
   * 'Delay Time': Changes the delay time up to 1 second.
@@ -22,9 +22,15 @@
 
 * There are 2 buttons.
   * 'BGCOLOR': Changes the background color of the GUI.
-  * 'L/R': Changes displaying parameters for each channel.
+  * 'L/R': Alternates displaying sliders for each channel.
 
 * In the convention of the digital audio world, the first audio input/output called as "input/output 1" is for the left channel of a stereo system, and the second one called as "input/output 2" is for the right channel. This plugin follows this convention, and you'll watch numbered inputs and outputs for this plugin in your audio plugin host.
+
+* Standalone Plugin
+  * In POSIX, the configuration like input and output connections is stored automatically in '~/.config/EarthEcho.settings' which also retrieves parameter values on the previous session.
+  * ALSA/JACK. JACK is preferred. Select JACK in "Audio device type" in the "Audio/MIDI Settings" menu popped up from the "Options" menu. QjackCtl is useful to manage connections. I also use [aj-snapshot](https://aj-snapshot.sourceforge.io/) to save and load connections.
+  * Parameter values can be saved using "Save current state..." in the "Options" menu.
+  * In the command line, EarthEcho can load a parameter file for multiple processes, e.g., `earthecho param1.earthecho`.
 
 ## Installation
 
@@ -38,6 +44,7 @@ git clone -b main https://github.com/JimmyKenMerchant/EarthEcho.git
 cd EarthEcho/builder_linux
 # For more detail, read "builder_linux/README.md".
 ./builder_linux.sh vst3 lv2
+sudo ./installer_linux.sh vst3 lv2 standalone icons
 ```
 
 * I haven't made it with AU format. I leave the XML file for Projucer, and you can customize settings to make an AU plugin on Projucer.
