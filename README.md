@@ -26,7 +26,7 @@
 
 * In the convention of the digital audio world, the first audio input/output called as "input/output 1" is for the left channel of a stereo system, and the second one called as "input/output 2" is for the right channel. This plugin follows this convention, and you'll watch numbered inputs and outputs for this plugin in your audio plugin host.
 
-* Standalone Plugin
+* I'm also offering this plugin as an application, so called "standalone plugin".
   * In POSIX, the configuration like input and output connections is stored automatically in '~/.config/EarthEcho.settings' which also retrieves parameter values on the previous session.
   * ALSA/JACK. JACK is preferred. Select JACK in "Audio device type" in the "Audio/MIDI Settings" menu popped up from the "Options" menu. QjackCtl is useful to manage connections. I also use [aj-snapshot](https://aj-snapshot.sourceforge.io/) to save and load connections.
   * Parameter values can be saved using "Save current state..." in the "Options" menu.
@@ -51,7 +51,7 @@ sudo ./installer_linux.sh vst3 lv2 standalone icons
 
 ## Technical Notes
 
-* 02/15/2022: 6.1.5-lv2 seems to make no sound on LV2 plugin format. Checkout to 6.1.4-lv2.
+* 02/15/2022: ~6.1.5-lv2 seems to make no sound on LV2 plugin format. Checkout to 6.1.4-lv2.~ [lv2 has already become OK.](https://github.com/lv2-porting-project/JUCE/pull/21)
 
 ## License
 
