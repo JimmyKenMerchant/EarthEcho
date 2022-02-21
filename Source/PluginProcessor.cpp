@@ -51,6 +51,7 @@ EarthEchoAudioProcessor::EarthEchoAudioProcessor()
                      #endif
                        ),
 #endif
+       stateColourTheme (0),
        arrayParameter (EARTHECHO_NUMBER_PARAMETERS)
 {
     for (unsigned int i = 0; i < arrayParameter.size(); i++)
@@ -252,6 +253,7 @@ void EarthEchoAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     MemoryOutputStream outputStream (destData, true);
     for (unsigned int i = 0; i < arrayParameter.size(); i++)
         outputStream.writeFloat (*arrayParameter[i]);
+    outputStream.writeInt (stateColourTheme);
 }
 
 void EarthEchoAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -261,6 +263,7 @@ void EarthEchoAudioProcessor::setStateInformation (const void* data, int sizeInB
     MemoryInputStream inputStream (data, static_cast<size_t> (sizeInBytes), false);
     for (unsigned int i = 0; i < arrayParameter.size(); i++)
         arrayParameter[i]->setValueNotifyingHost (inputStream.readFloat());
+    stateColourTheme = inputStream.readInt();
 }
 
 //==============================================================================

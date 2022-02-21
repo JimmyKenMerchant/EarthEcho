@@ -26,10 +26,8 @@
 extern _earthEchoSliderParameters earthEchoSliderParameters[];
 
 //==============================================================================
-
-EarthEchoAudioProcessorEditorCustomLookAndFeel::EarthEchoAudioProcessorEditorCustomLookAndFeel (juce::Colour bgColour, juce::Colour textColour)
+EarthEchoAudioProcessorEditorCustomLookAndFeel::EarthEchoAudioProcessorEditorCustomLookAndFeel()
 {
-    setWindowLookAndFeel(bgColour, textColour);
 }
 
 void EarthEchoAudioProcessorEditorCustomLookAndFeel::setWindowLookAndFeel (juce::Colour bgColour, juce::Colour textColour)
@@ -170,11 +168,18 @@ void EarthEchoAudioProcessorEditorCustomLookAndFeel::fillResizableWindowBackgrou
 
 //==============================================================================
 EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), processorParameters (audioProcessor.getParameters()), numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())), arraySlider ((unsigned int) audioProcessor.getParameters().size()), arrayLabel ((unsigned int) audioProcessor.getParameters().size()), bgColour (juce::Colours::blue), textColour (juce::Colours::yellow), thumbColour (juce::Colours::magenta), stateColourTheme (0), stateChannel (0), lookAndFeel (bgColour, textColour)
+    : AudioProcessorEditor (&p),
+      audioProcessor (p),
+      processorParameters (audioProcessor.getParameters()),
+      numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())),
+      arraySlider ((unsigned int) audioProcessor.getParameters().size()),
+      arrayLabel ((unsigned int) audioProcessor.getParameters().size()),
+      stateChannel (0)
 {
     juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + String (audioProcessor.getName()));
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
     {
+        juce::LookAndFeel::setDefaultLookAndFeel(&lookAndFeel); // For Dialog Window of Audio/MIDI Settings
         Rectangle<int> userAreaOfDisplay = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
         std::vector<int> sizesOnWindow = {400, 200, userAreaOfDisplay.getWidth(), userAreaOfDisplay.getHeight()};
         // Plugin Holder
@@ -213,6 +218,7 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
     buttonChangeChannel.addListener (this);
     addAndMakeVisible (&buttonChangeChannel);
     audioProcessor.addListener (this);
+    setColourTheme();
     changeLookAndFeel();
 }
 
@@ -222,6 +228,10 @@ EarthEchoAudioProcessorEditor::~EarthEchoAudioProcessorEditor()
     // If you don't remove a listener. The registration of the listener in EarthEchoAudioProcessor will be left.
     // Caution that the left listener causes a segmentation fault.
     audioProcessor.removeListener (this);
+    if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
+    {
+        juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
+    }
 }
 
 //==============================================================================
@@ -297,34 +307,9 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
 {
     if (button == &buttonChangeBgColour)
     {
-        if (stateColourTheme == 0)
-        {
-            bgColour = juce::Colours::black;
-            textColour = juce::Colours::yellow;
-            thumbColour = juce::Colours::magenta;
-            stateColourTheme = 1;
-        }
-        else if (stateColourTheme == 1)
-        {
-            bgColour = juce::Colours::coral;
-            textColour = juce::Colours::white;
-            thumbColour = juce::Colours::cadetblue;
-            stateColourTheme = 2;
-        }
-        else if (stateColourTheme == 2)
-        {
-            bgColour = juce::Colours::cadetblue;
-            textColour = juce::Colours::darkolivegreen;
-            thumbColour = juce::Colours::white;
-            stateColourTheme = 3;
-        }
-        else if (stateColourTheme == 3)
-        {
-            bgColour = juce::Colours::blue;
-            textColour = juce::Colours::yellow;
-            thumbColour = juce::Colours::magenta;
-            stateColourTheme = 0;
-        }
+        if (++audioProcessor.stateColourTheme >= 4)
+            audioProcessor.stateColourTheme = 0;
+        setColourTheme();
         changeLookAndFeel();
         if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
         {
@@ -360,6 +345,34 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
         }
     }
     button->giveAwayKeyboardFocus(); // Unfocus to Hide to Darken Button Color after Clicking
+}
+
+void EarthEchoAudioProcessorEditor::setColourTheme()
+{
+    if (audioProcessor.stateColourTheme == 0)
+    {
+        bgColour = juce::Colours::blue;
+        textColour = juce::Colours::yellow;
+        thumbColour = juce::Colours::magenta;
+    }
+    else if (audioProcessor.stateColourTheme == 1)
+    {
+        bgColour = juce::Colours::black;
+        textColour = juce::Colours::yellow;
+        thumbColour = juce::Colours::magenta;
+    }
+    else if (audioProcessor.stateColourTheme == 2)
+    {
+        bgColour = juce::Colours::coral;
+        textColour = juce::Colours::white;
+        thumbColour = juce::Colours::cadetblue;
+    }
+    else if (audioProcessor.stateColourTheme == 3)
+    {
+        bgColour = juce::Colours::cadetblue;
+        textColour = juce::Colours::darkolivegreen;
+        thumbColour = juce::Colours::white;
+    }
 }
 
 void EarthEchoAudioProcessorEditor::changeLookAndFeel()

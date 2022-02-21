@@ -31,7 +31,7 @@
 class EarthEchoAudioProcessorEditorCustomLookAndFeel  : public juce::LookAndFeel_V4
 {
 public:
-    EarthEchoAudioProcessorEditorCustomLookAndFeel (juce::Colour bgColour, juce::Colour textColour);
+    EarthEchoAudioProcessorEditorCustomLookAndFeel ();
 
     //==============================================================================
     void setWindowLookAndFeel (juce::Colour bgColour, juce::Colour textColour);
@@ -75,16 +75,17 @@ private:
     unsigned int numSingleChannelParameters;
     std::vector<juce::Slider> arraySlider;
     std::vector<juce::Label> arrayLabel;
+    unsigned int stateChannel;
     juce::Colour bgColour;
     juce::Colour textColour;
     juce::Colour thumbColour;
     juce::TextButton buttonChangeBgColour;
     juce::TextButton buttonChangeChannel;
-    unsigned int stateColourTheme;
-    unsigned int stateChannel;
+
 
     //==============================================================================
     EarthEchoAudioProcessorEditorCustomLookAndFeel lookAndFeel;
+    void setColourTheme();
     void changeLookAndFeel();
 
     //==============================================================================
