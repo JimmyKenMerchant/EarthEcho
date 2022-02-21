@@ -54,11 +54,11 @@ EarthEchoAudioProcessor::EarthEchoAudioProcessor()
        stateColourTheme (0),
        arrayParameter (EARTHECHO_NUMBER_PARAMETERS)
 {
-    for (unsigned int i = 0; i < arrayParameter.size(); i++)
+    for (unsigned int i = 0; i < arrayParameter.size(); ++i)
     {
         addParameter (arrayParameter[i] = new juce::AudioParameterFloat (earthEchoSliderParameters[i].id, earthEchoSliderParameters[i].name, earthEchoSliderParameters[i].range, earthEchoSliderParameters[i].initialValue, earthEchoSliderParameters[i].label));
     }
-    juce::Logger::getCurrentLogger()->writeToLog ("Size of paramters is " + String ((int) arrayParameter.size()) + " items.");
+    juce::Logger::getCurrentLogger()->writeToLog ("Size of paramters is " + String (static_cast<int> (arrayParameter.size())) + " items.");
 }
 
 EarthEchoAudioProcessor::~EarthEchoAudioProcessor()
@@ -132,16 +132,16 @@ void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int /*samplesPer
 {
     // Initialization before Playback
     //juce::Logger::getCurrentLogger()->writeToLog (String (sampleRate, 5));
-    //juce::Logger::getCurrentLogger()->writeToLog (String ((int) sampleRate));
-    playBackSampleRate = (unsigned int) sampleRate;
+    //juce::Logger::getCurrentLogger()->writeToLog (String (static_cast<int> (sampleRate)));
+    playBackSampleRate = static_cast<unsigned int> (sampleRate);
     // Moving Average for Low-pass Filter and High-pass Filter for Each Channel
-    for (unsigned int i = 0; i < (unsigned int) getTotalNumInputChannels() * 2; i++)
+    for (unsigned int i = 0; i < static_cast<unsigned int> (getTotalNumInputChannels() * 2); ++i)
         arrayMovingAverage.push_back (0);
     // Set Zero to Counter of Samples for Each Channel
-    for (unsigned int i = 0; i < (unsigned int) getTotalNumInputChannels(); i++)
+    for (unsigned int i = 0; i < static_cast<unsigned int> (getTotalNumInputChannels()); ++i)
         arrayPlayBackSampleCount.push_back (0);
     // Make Memory Space to Store Delay Sound for Each Channel
-    for (unsigned int i = 0; i < (unsigned int) getTotalNumInputChannels(); i++)
+    for (unsigned int i = 0; i < static_cast<unsigned int> (getTotalNumInputChannels()); ++i)
     {
         std::vector<float> channel (playBackSampleRate, 0.0f);
         arrayDelay.push_back (channel);
@@ -191,19 +191,19 @@ bool EarthEchoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = (unsigned int) getTotalNumInputChannels();
+    auto totalNumInputChannels  = static_cast<unsigned int> (getTotalNumInputChannels());
 
     // Channels
     for (unsigned int i = 0; i < totalNumInputChannels; ++i)
     {
-        auto* inputData = buffer.getReadPointer (i);
-        auto* outputData = buffer.getWritePointer (i);
+        auto* inputData = buffer.getReadPointer (static_cast<int> (i));
+        auto* outputData = buffer.getWritePointer (static_cast<int> (i));
         // Samples
-        for (unsigned int j = 0; j < (unsigned int) buffer.getNumSamples(); ++j)
+        for (unsigned int j = 0; j < static_cast<unsigned int> (buffer.getNumSamples()); ++j)
         {
             // Input
             auto currentData = inputData[j];
-            auto delayIndex = (unsigned int) ((float) (playBackSampleRate - 1) * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoDelay]->get());
+            auto delayIndex = static_cast<unsigned int> (static_cast<float> (playBackSampleRate - 1) * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoDelay]->get());
             // Mix
             float mixData;
             if (delayIndex == 0)
@@ -212,7 +212,7 @@ void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             }
             else
             {
-                mixData = ((arrayDelay[i][(((unsigned int) arrayPlayBackSampleCount[i] + playBackSampleRate) - delayIndex) % (playBackSampleRate)]) * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoRepeat]->get()) + (currentData * (1.0f - arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoRepeat]->get()));
+                mixData = ((arrayDelay[i][((static_cast<unsigned int> (arrayPlayBackSampleCount[i]) + playBackSampleRate) - delayIndex) % (playBackSampleRate)]) * arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoRepeat]->get()) + (currentData * (1.0f - arrayParameter[EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL * i + EarthEchoRepeat]->get()));
             }
             arrayDelay[i][arrayPlayBackSampleCount[i]] = mixData;
             // Low-pass Filter
@@ -251,7 +251,7 @@ void EarthEchoAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // Consider to use XML (strings) or JUCE's unique ValueTree classes.
     // Raw Data
     MemoryOutputStream outputStream (destData, true);
-    for (unsigned int i = 0; i < arrayParameter.size(); i++)
+    for (unsigned int i = 0; i < arrayParameter.size(); ++i)
         outputStream.writeFloat (*arrayParameter[i]);
     outputStream.writeInt (stateColourTheme);
 }
@@ -261,7 +261,7 @@ void EarthEchoAudioProcessor::setStateInformation (const void* data, int sizeInB
     // Load Data from Memory Block
     // Raw Data
     MemoryInputStream inputStream (data, static_cast<size_t> (sizeInBytes), false);
-    for (unsigned int i = 0; i < arrayParameter.size(); i++)
+    for (unsigned int i = 0; i < arrayParameter.size(); ++i)
         arrayParameter[i]->setValueNotifyingHost (inputStream.readFloat());
     stateColourTheme = inputStream.readInt();
 }

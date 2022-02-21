@@ -95,7 +95,7 @@ public:
         auto reducedRect = Justification (Justification::centred)
                               .appliedToRectangle (Rectangle<int> (getHeight(), getHeight()), getLocalBounds())
                               .toFloat()
-                              .reduced ((float) getHeight() * 0.3f);
+                              .reduced (static_cast<float> (getHeight()) * 0.3f);
 
         g.fillPath (p, p.getTransformToScaleToFit (reducedRect, true));
     }
@@ -171,9 +171,9 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
     : AudioProcessorEditor (&p),
       audioProcessor (p),
       processorParameters (audioProcessor.getParameters()),
-      numSingleChannelParameters ((unsigned int) (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())),
-      arraySlider ((unsigned int) audioProcessor.getParameters().size()),
-      arrayLabel ((unsigned int) audioProcessor.getParameters().size()),
+      numSingleChannelParameters (static_cast<unsigned int> (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())),
+      arraySlider (static_cast<unsigned int> (audioProcessor.getParameters().size())),
+      arrayLabel (static_cast<unsigned int> (audioProcessor.getParameters().size())),
       stateChannel (0)
 {
     juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + String (audioProcessor.getName()));
@@ -197,18 +197,18 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
     // Set the size of this GUI before the end of this constructor.
     setSize (600, 400);
     //juce::Logger::getCurrentLogger()->writeToLog (String (arraySlider.size()));
-    for (unsigned int i = 0; i < arraySlider.size(); i++)
+    for (unsigned int i = 0; i < arraySlider.size(); ++i)
     {
         arraySlider[i].setSliderStyle (juce::Slider::LinearVertical);
         arraySlider[i].setTextBoxStyle (juce::Slider::TextBoxBelow, false, 80, 20); // No read-only = setTextBoxIsEditable (true)
-        arraySlider[i].setTextValueSuffix (processorParameters[i]->getLabel());
+        arraySlider[i].setTextValueSuffix (processorParameters[static_cast<int> (i)]->getLabel());
         arraySlider[i].setRange (earthEchoSliderParameters[i].range.start, earthEchoSliderParameters[i].range.end * earthEchoSliderParameters[i].expander);
-        arraySlider[i].setValue (processorParameters[i]->getValue() * earthEchoSliderParameters[i].expander);
+        arraySlider[i].setValue (processorParameters[static_cast<int> (i)]->getValue() * earthEchoSliderParameters[i].expander);
         arraySlider[i].setNumDecimalPlacesToDisplay (2);
         arraySlider[i].addListener (this);
         addChildComponent (&arraySlider[i]);
         arrayLabel[i].setJustificationType (juce::Justification::centred);
-        arrayLabel[i].setText (processorParameters[i]->getName (20), juce::dontSendNotification);
+        arrayLabel[i].setText (processorParameters[static_cast<int> (i)]->getName (20), juce::dontSendNotification);
         addChildComponent (&arrayLabel[i]);
     }
     buttonChangeBgColour.setButtonText ("BGCOLOR");
@@ -254,17 +254,17 @@ void EarthEchoAudioProcessorEditor::resized()
     //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getY()));
     //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getWidth()));
     //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getHeight()));
-    auto leftCornerX = (int) getLocalBounds().getX();
-    auto leftCornerY = (int) getLocalBounds().getY();
-    auto editorWidth = (int) getLocalBounds().getWidth();
-    auto editorHeight = (int) getLocalBounds().getHeight();
-    auto sliderWidth = (int) ((float) editorWidth / (float) numSingleChannelParameters);
-    auto sliderHeight = (int) (3.0f * ((float) editorHeight / 4.0f));
-    auto labelButtonHeight =  (int) ((float) (editorHeight - sliderHeight) / 2.0f);
-    for (unsigned int i = 0; i < arraySlider.size(); i++)
+    auto leftCornerX = static_cast<int> (getLocalBounds().getX());
+    auto leftCornerY = static_cast<int> (getLocalBounds().getY());
+    auto editorWidth = static_cast<int> (getLocalBounds().getWidth());
+    auto editorHeight = static_cast<int> (getLocalBounds().getHeight());
+    auto sliderWidth = static_cast<int> (static_cast<float> (editorWidth) / static_cast<float> (numSingleChannelParameters));
+    auto sliderHeight = static_cast<int> (3.0f * (static_cast<float> (editorHeight) / 4.0f));
+    auto labelButtonHeight =  static_cast<int> (static_cast<float> (editorHeight - sliderHeight) / 2.0f);
+    for (unsigned int i = 0; i < arraySlider.size(); ++i)
     {
-        arraySlider[i].setBounds (leftCornerX + (sliderWidth * (int) (i % numSingleChannelParameters)), leftCornerY, sliderWidth, sliderHeight);
-        arrayLabel[i].setBounds (leftCornerX + (sliderWidth * (int) (i % numSingleChannelParameters)), leftCornerY + sliderHeight, sliderWidth, labelButtonHeight);
+        arraySlider[i].setBounds (leftCornerX + (sliderWidth * static_cast<int> (i % numSingleChannelParameters)), leftCornerY, sliderWidth, sliderHeight);
+        arrayLabel[i].setBounds (leftCornerX + (sliderWidth * static_cast<int> (i % numSingleChannelParameters)), leftCornerY + sliderHeight, sliderWidth, labelButtonHeight);
         if (i < numSingleChannelParameters)
         {
             arraySlider[i].setVisible (true);
@@ -276,14 +276,14 @@ void EarthEchoAudioProcessorEditor::resized()
             arrayLabel[i].setVisible (false);
         }
     }
-    buttonChangeBgColour.setBounds (leftCornerX + (sliderWidth * (int) (numSingleChannelParameters - 1)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
-    buttonChangeChannel.setBounds (leftCornerX + (sliderWidth * (int) (numSingleChannelParameters - 2)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
+    buttonChangeBgColour.setBounds (leftCornerX + (sliderWidth * static_cast<int> (numSingleChannelParameters - 1)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
+    buttonChangeChannel.setBounds (leftCornerX + (sliderWidth * static_cast<int> (numSingleChannelParameters - 2)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
 }
 
 void EarthEchoAudioProcessorEditor::audioProcessorParameterChanged (AudioProcessor* /*processor*/, int parameterIndex, float newValue)
 {
     //juce::Logger::getCurrentLogger()->writeToLog (String ("EarthEchoAudioProcessorEditor::audioProcessorParameterChanged"));
-    arraySlider[(unsigned int) parameterIndex].setValue (newValue * earthEchoSliderParameters[(unsigned int) parameterIndex].expander);
+    arraySlider[static_cast<unsigned int> (parameterIndex)].setValue (newValue * earthEchoSliderParameters[static_cast<unsigned int> (parameterIndex)].expander);
 }
 
 void EarthEchoAudioProcessorEditor::audioProcessorChanged (AudioProcessor* /*processor*/, const ChangeDetails& /*details*/)
@@ -293,12 +293,12 @@ void EarthEchoAudioProcessorEditor::audioProcessorChanged (AudioProcessor* /*pro
 
 void EarthEchoAudioProcessorEditor::sliderValueChanged (juce::Slider* slider)
 {
-    for (unsigned int i = 0; i < arraySlider.size(); i++)
+    for (unsigned int i = 0; i < arraySlider.size(); ++i)
     {
         if (slider == &arraySlider[i])
         {
             // Notify to the host to sync with host's panel to control parameters of this plugin.
-            processorParameters[i]->setValueNotifyingHost ((float) slider->getValue() / earthEchoSliderParameters[i].expander);
+            processorParameters[static_cast<int> (i)]->setValueNotifyingHost (static_cast<float> (slider->getValue() / earthEchoSliderParameters[i].expander));
         }
     }
 }
@@ -330,7 +330,7 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
         {
             stateChannel = 0;
         }
-        for (unsigned int i = 0; i < arraySlider.size(); i++)
+        for (unsigned int i = 0; i < arraySlider.size(); ++i)
         {
             if (i < numSingleChannelParameters)
             {
@@ -397,7 +397,7 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
     lookAndFeel.setColour (juce::TextButton::textColourOffId, textColour); // juce::Button::setToggleState
     lookAndFeel.setColour (juce::TextButton::textColourOnId, textColour); // juce::Button::setToggleState
     lookAndFeel.setColour (juce::ComboBox::outlineColourId, textColour); // Also Outline of juce::TextButton
-    for (unsigned int i = 0; i < arraySlider.size(); i++)
+    for (unsigned int i = 0; i < arraySlider.size(); ++i)
     {
         arraySlider[i].lookAndFeelChanged(); // To Change Colors for Text Box of Slider
     }
