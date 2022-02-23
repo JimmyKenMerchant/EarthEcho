@@ -14,10 +14,19 @@ if [[ $@ == *'uninstall'* ]]; then
     rm ${PREFIX_PATH}/bin/${PLUGIN_NAME_LOWERCASE}
   fi
   if [[ $@ == *'icons'* ]]; then
-    echo "${PLUGIN_NAME}: Uninstalling Icons..."
-    rm ${PREFIX_PATH}/share/icons/hicolor/${ICON_SMALL_SIZE}x${ICON_SMALL_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
-    rm ${PREFIX_PATH}/share/icons/hicolor/${ICON_BIG_SIZE}x${ICON_BIG_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
-    rm ${PREFIX_PATH}/share/icons/hicolor/scalable/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION_SCALABLE}
+    if [[ ${ICON_SMALL_SIZE} != '' && ${ICON_EXTENSION} != '' ]]; then
+      echo "${PLUGIN_NAME}: Uninstalling ${ICON_SMALL_SIZE}x${ICON_SMALL_SIZE} .${ICON_EXTENSION} Icons..."
+      rm ${PREFIX_PATH}/share/icons/hicolor/${ICON_SMALL_SIZE}x${ICON_SMALL_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
+    fi
+    if [[ ${ICON_BIG_SIZE} != '' && ${ICON_EXTENSION} != '' ]]; then
+      echo "${PLUGIN_NAME}: Uninstalling ${ICON_BIG_SIZE}x${ICON_BIG_SIZE} .${ICON_EXTENSION} Icons..."
+      rm ${PREFIX_PATH}/share/icons/hicolor/${ICON_BIG_SIZE}x${ICON_BIG_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
+    fi
+    if [[ ${ICON_EXTENSION_SCALABLE} != '' ]]; then
+      echo "${PLUGIN_NAME}: Uninstalling Scalable .${ICON_EXTENSION_SCALABLE} Icons..."
+      rm ${PREFIX_PATH}/share/icons/hicolor/scalable/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION_SCALABLE}
+    fi
+    echo "${PLUGIN_NAME}: Uninstalling ${PLUGIN_NAME_LOWERCASE}.desktop..."
     rm ${PREFIX_PATH}/share/applications/${PLUGIN_NAME_LOWERCASE}.desktop
   fi
   if [[ $@ == *'vst3'* ]]; then
@@ -34,10 +43,19 @@ else
     cp build/${PLUGIN_NAME}_artefacts/Standalone/${PLUGIN_NAME_LOWERCASE} ${PREFIX_PATH}/bin/
   fi
   if [[ $@ == *'icons'* ]]; then
-    echo "${PLUGIN_NAME}: Installing Icons..."
-    cp ${ICON_PATH}/${ICON_NAME}${ICON_SMALL_SIZE}.${ICON_EXTENSION} ${PREFIX_PATH}/share/icons/hicolor/${ICON_SMALL_SIZE}x${ICON_SMALL_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
-    cp ${ICON_PATH}/${ICON_NAME}${ICON_BIG_SIZE}.${ICON_EXTENSION} ${PREFIX_PATH}/share/icons/hicolor/${ICON_BIG_SIZE}x${ICON_BIG_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
-    cp ${ICON_PATH}/${ICON_NAME}.${ICON_EXTENSION_SCALABLE} ${PREFIX_PATH}/share/icons/hicolor/scalable/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION_SCALABLE}
+    if [[ ${ICON_SMALL_SIZE} != '' && ${ICON_EXTENSION} != '' ]]; then
+      echo "${PLUGIN_NAME}: Installing ${ICON_SMALL_SIZE}x${ICON_SMALL_SIZE} .${ICON_EXTENSION} Icons..."
+      cp ${ICON_PATH}/${ICON_NAME}${ICON_SMALL_SIZE}.${ICON_EXTENSION} ${PREFIX_PATH}/share/icons/hicolor/${ICON_SMALL_SIZE}x${ICON_SMALL_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
+    fi
+    if [[ ${ICON_BIG_SIZE} != '' && ${ICON_EXTENSION} != '' ]]; then
+      echo "${PLUGIN_NAME}: Installing ${ICON_BIG_SIZE}x${ICON_BIG_SIZE} .${ICON_EXTENSION} Icons..."
+      cp ${ICON_PATH}/${ICON_NAME}${ICON_BIG_SIZE}.${ICON_EXTENSION} ${PREFIX_PATH}/share/icons/hicolor/${ICON_BIG_SIZE}x${ICON_BIG_SIZE}/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION}
+    fi
+    if [[ ${ICON_EXTENSION_SCALABLE} != '' ]]; then
+      echo "${PLUGIN_NAME}: Installing Scalable .${ICON_EXTENSION_SCALABLE} Icons..."
+      cp ${ICON_PATH}/${ICON_NAME}.${ICON_EXTENSION_SCALABLE} ${PREFIX_PATH}/share/icons/hicolor/scalable/apps/${PLUGIN_NAME_LOWERCASE}.${ICON_EXTENSION_SCALABLE}
+    fi
+    echo "${PLUGIN_NAME}: Installing ${PLUGIN_NAME_LOWERCASE}.desktop..."
     cp ${PLUGIN_NAME_LOWERCASE}.desktop ${PREFIX_PATH}/share/applications
   fi
   if [[ $@ == *'vst3'* ]]; then

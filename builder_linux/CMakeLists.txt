@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 set(PLUGIN_NAME "EarthEcho")
 string(TOLOWER ${PLUGIN_NAME} PLUGIN_NAME_LOWERCASE)
-project(${PLUGIN_NAME}_project VERSION 1.0.1)
+project(${PLUGIN_NAME}_project VERSION 0.9.5)
 
 option(PLUGIN_VST3 "Build VST3 Plugin" OFF)
 option(PLUGIN_LV2 "Build LADSPA Version 2 Plugin" OFF)
@@ -23,6 +23,7 @@ message(STATUS "JUCE Formats: ${PLUGIN_FORMATS}")
 juce_add_plugin(${PLUGIN_NAME}
   PLUGIN_NAME ${PLUGIN_NAME}
   PRODUCT_NAME ${PLUGIN_NAME_LOWERCASE}
+  VERSION ${CMAKE_PROJECT_VERSION}
   BUNDLE_ID "com.jimmykenmerchant.earthEcho"
   ICON_SMALL "../resources/icons/icon128.png"
   ICON_LARGE "../resources/icons/icon256.png"
@@ -40,6 +41,7 @@ juce_add_plugin(${PLUGIN_NAME}
   DESCRIPTION "The Echo to Emulate Nature"
 )
 
+# Generate JuceHeader.h
 juce_generate_juce_header(${PLUGIN_NAME})
 
 target_compile_definitions(${PLUGIN_NAME}

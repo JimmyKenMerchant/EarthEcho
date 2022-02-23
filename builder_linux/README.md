@@ -48,6 +48,7 @@
 
 **History**
 
+* February 23, 2022: Modified "installer_linux.sh" about installing icons with imcomplete set of sizes.
 * February 5, 2022: Added the "icons" arguments to "installer_linux.sh". Installing with lowercase letters.
 * January 30, 2022: Added the "debug" and "newjuce" arguments to "builder_linux.sh".
 * January 29, 2022: Published "builder_linux.sh", "installer_linux.sh", and "README.md" for the first time.

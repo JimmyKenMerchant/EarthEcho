@@ -75,7 +75,7 @@ private:
     unsigned int numSingleChannelParameters;
     std::vector<juce::Slider> arraySlider;
     std::vector<juce::Label> arrayLabel;
-    unsigned int stateChannel;
+    bool stateDisplayChannel;
     juce::Colour bgColour;
     juce::Colour textColour;
     juce::Colour thumbColour;

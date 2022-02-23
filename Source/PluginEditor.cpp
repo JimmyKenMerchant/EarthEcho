@@ -174,7 +174,7 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
       numSingleChannelParameters (static_cast<unsigned int> (audioProcessor.getParameters().size() / audioProcessor.getTotalNumInputChannels())),
       arraySlider (static_cast<unsigned int> (audioProcessor.getParameters().size())),
       arrayLabel (static_cast<unsigned int> (audioProcessor.getParameters().size())),
-      stateChannel (0)
+      stateDisplayChannel (false)
 {
     juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + String (audioProcessor.getName()));
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
@@ -184,7 +184,7 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
         std::vector<int> sizesOnWindow = {400, 200, userAreaOfDisplay.getWidth(), userAreaOfDisplay.getHeight()};
         // Plugin Holder
         auto* toplevelDocumentWindow = dynamic_cast<DocumentWindow*> (juce::TopLevelWindow::getTopLevelWindow (0));
-        toplevelDocumentWindow->setName(EARTHECHO_NAME + String (" ") + EARTHECHO_VERSION);
+        toplevelDocumentWindow->setName(EARTHECHO_NAME + String (" v") + EARTHECHO_VERSION);
         toplevelDocumentWindow->setTitleBarButtonsRequired(DocumentWindow::allButtons, false);
         toplevelDocumentWindow->setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
         toplevelDocumentWindow->setResizable(true, false);
@@ -244,7 +244,7 @@ void EarthEchoAudioProcessorEditor::paint (juce::Graphics& g)
     // Set Text Colour
     g.setColour (textColour);
     g.setFont (16.0f);
-    g.drawFittedText (EARTHECHO_NAME + newLine + EARTHECHO_VERSION, getLocalBounds(), juce::Justification::centred, 1);
+    g.drawFittedText (EARTHECHO_NAME + newLine + String ("v") + EARTHECHO_VERSION, getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void EarthEchoAudioProcessorEditor::resized()
@@ -322,25 +322,18 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
     }
     else if (button == &buttonChangeChannel)
     {
-        if (stateChannel == 0)
-        {
-            stateChannel = 1;
-        }
-        else if (stateChannel == 1)
-        {
-            stateChannel = 0;
-        }
+        stateDisplayChannel = ! stateDisplayChannel;
         for (unsigned int i = 0; i < arraySlider.size(); ++i)
         {
             if (i < numSingleChannelParameters)
             {
-                arraySlider[i].setVisible ((bool) stateChannel ^ 1);
-                arrayLabel[i].setVisible ((bool) stateChannel ^ 1);
+                arraySlider[i].setVisible (! stateDisplayChannel);
+                arrayLabel[i].setVisible (! stateDisplayChannel);
             }
             else
             {
-                arraySlider[i].setVisible ((bool) stateChannel);
-                arrayLabel[i].setVisible ((bool) stateChannel);
+                arraySlider[i].setVisible (stateDisplayChannel);
+                arrayLabel[i].setVisible (stateDisplayChannel);
             }
         }
     }
@@ -377,7 +370,7 @@ void EarthEchoAudioProcessorEditor::setColourTheme()
 
 void EarthEchoAudioProcessorEditor::changeLookAndFeel()
 {
-    // Set Colors
+    // Set Colors for Plugin GUI
     lookAndFeel.setColour (juce::Slider::backgroundColourId, juce::Colour (0x00000000));
     lookAndFeel.setColour (juce::Slider::thumbColourId, thumbColour);
     lookAndFeel.setColour (juce::Slider::trackColourId, textColour);
@@ -397,6 +390,29 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
     lookAndFeel.setColour (juce::TextButton::textColourOffId, textColour); // juce::Button::setToggleState
     lookAndFeel.setColour (juce::TextButton::textColourOnId, textColour); // juce::Button::setToggleState
     lookAndFeel.setColour (juce::ComboBox::outlineColourId, textColour); // Also Outline of juce::TextButton
+    // Set Colors for Dialog Window of Standalone Plugin
+    if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
+    {
+        lookAndFeel.setColour (juce::ComboBox::backgroundColourId, bgColour);
+        lookAndFeel.setColour (juce::ComboBox::textColourId, textColour);
+        lookAndFeel.setColour (juce::ComboBox::focusedOutlineColourId, textColour);
+        lookAndFeel.setColour (juce::ComboBox::buttonColourId, bgColour);
+        lookAndFeel.setColour (juce::ComboBox::arrowColourId, thumbColour);
+        lookAndFeel.setColour (juce::ToggleButton::textColourId, textColour);
+        lookAndFeel.setColour (juce::ToggleButton::tickColourId, thumbColour);
+        lookAndFeel.setColour (juce::ToggleButton::tickDisabledColourId, thumbColour.darker (0.2f));
+        lookAndFeel.setColour (juce::ListBox::backgroundColourId, bgColour);
+        lookAndFeel.setColour (juce::ListBox::outlineColourId, textColour);
+        lookAndFeel.setColour (juce::ListBox::textColourId, textColour);
+        lookAndFeel.setColour (juce::PopupMenu::backgroundColourId, bgColour);
+        lookAndFeel.setColour (juce::PopupMenu::textColourId, textColour);
+        lookAndFeel.setColour (juce::PopupMenu::headerTextColourId, textColour);
+        lookAndFeel.setColour (juce::PopupMenu::highlightedBackgroundColourId, textColour);
+        lookAndFeel.setColour (juce::PopupMenu::highlightedTextColourId, bgColour);
+        lookAndFeel.setColour (juce::ScrollBar::backgroundColourId, bgColour);
+        lookAndFeel.setColour (juce::ScrollBar::thumbColourId, thumbColour);
+        lookAndFeel.setColour (juce::ScrollBar::trackColourId, textColour);
+    }
     for (unsigned int i = 0; i < arraySlider.size(); ++i)
     {
         arraySlider[i].lookAndFeelChanged(); // To Change Colors for Text Box of Slider
