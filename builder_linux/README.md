@@ -22,7 +22,7 @@
   * A standalone executable is build without any argument.
   * If you select to build a LV2 plugin, the JUCE framework is downloaded from [the fork of the LV2 porting project](https://github.com/lv2-porting-project/JUCE/tree/lv2).
   * This script executes CMake with CMakeLists.txt in this folder. LLVM Clang is assigned as the C/C++ compiler.
-  * Written by Kenta Ishii (ukulele.JimmyKenMerchant.com) in January 2022
+  * Written by Kenta Ishii (JimmyKenMerchant.com) in January 2022
 
 * Arguments (Orderless):
   1. "vst3" - Build VST3 Plugin
@@ -37,7 +37,7 @@
   * Example to Uninstall Standalone: `./installer_linux.sh standalone uninstall`
   * This script needs the root privilege.
   * '/usr/local' is the prefix to destinations. Change the value of PREFIX_PATH in this script if you want to install an executable and plugins into other destinations.
-  * Written by Kenta Ishii (ukulele.JimmyKenMerchant.com) in January 2022
+  * Written by Kenta Ishii (JimmyKenMerchant.com) in January 2022
 
 * Arguments (Orderless):
   1. "standalone" - Install/Uninstall Standalone Executable to PREFIX_PATH/bin
