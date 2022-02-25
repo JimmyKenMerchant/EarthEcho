@@ -217,6 +217,9 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
     buttonChangeChannel.setButtonText ("L/R");
     buttonChangeChannel.addListener (this);
     addAndMakeVisible (&buttonChangeChannel);
+    buttonInformation.setButtonText ("ABOUT");
+    buttonInformation.addListener (this);
+    addAndMakeVisible (&buttonInformation);
     audioProcessor.addListener (this);
     setColourTheme();
     changeLookAndFeel();
@@ -278,6 +281,7 @@ void EarthEchoAudioProcessorEditor::resized()
     }
     buttonChangeBgColour.setBounds (leftCornerX + (sliderWidth * static_cast<int> (numSingleChannelParameters - 1)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
     buttonChangeChannel.setBounds (leftCornerX + (sliderWidth * static_cast<int> (numSingleChannelParameters - 2)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
+    buttonInformation.setBounds (leftCornerX + (sliderWidth * static_cast<int> (numSingleChannelParameters - 6)), leftCornerY + sliderHeight + labelButtonHeight, sliderWidth, labelButtonHeight);
 }
 
 void EarthEchoAudioProcessorEditor::audioProcessorParameterChanged (AudioProcessor* /*processor*/, int parameterIndex, float newValue)
@@ -336,6 +340,10 @@ void EarthEchoAudioProcessorEditor::buttonClicked (juce::Button* button)
                 arrayLabel[i].setVisible (stateDisplayChannel);
             }
         }
+    }
+    else if (button == &buttonInformation)
+    {
+        createAboutWindow();
     }
     button->giveAwayKeyboardFocus(); // Unfocus to Hide to Darken Button Color after Clicking
 }
@@ -418,4 +426,49 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
         arraySlider[i].lookAndFeelChanged(); // To Change Colors for Text Box of Slider
     }
     lookAndFeel.setWindowLookAndFeel (bgColour, textColour);
+}
+
+void EarthEchoAudioProcessorEditor::createAboutWindow()
+{
+    const unsigned int numberInfoLabel = 5;
+    std::vector<juce::Label*> arrayInfoLabel (numberInfoLabel);
+    juce::Time compilationTime = juce::Time::getCompilationDate();
+    juce::Component* infoComponent = new juce::Component();
+    infoComponent->setSize (300, 150);
+    auto infoLabelLeftCornerX = infoComponent->getLocalBounds().getX();
+    auto infoLabelLeftCornerY = infoComponent->getLocalBounds().getY();
+    auto infoComponentWidth = infoComponent->getLocalBounds().getWidth();
+    auto infoComponentHeight = infoComponent->getLocalBounds().getHeight();
+    auto infoLabelHeight = infoComponentHeight / static_cast<int> (numberInfoLabel);
+
+    for (unsigned int i = 0; i < numberInfoLabel; ++i)
+        arrayInfoLabel[i] = new juce::Label();
+
+    arrayInfoLabel[0]->setText (EARTHECHO_NAME + String (" v") + EARTHECHO_VERSION, juce::dontSendNotification);
+    arrayInfoLabel[1]->setText (String ("Copyright (c) ") + String (compilationTime.getYear()) + String (" ") + EARTHECHO_COMPANY + String ("."), juce::dontSendNotification);
+    arrayInfoLabel[2]->setText (String ("License: GPLv3"), juce::dontSendNotification);
+    arrayInfoLabel[3]->setText (String ("Build Date: ") + String (compilationTime.toString(true, false, false, false)), juce::dontSendNotification);
+    arrayInfoLabel[4]->setText (String ("JUCE Framework Version: ") + String (JUCE_MAJOR_VERSION) + String (".") + String (JUCE_MINOR_VERSION) + String (".") + String (JUCE_BUILDNUMBER), juce::dontSendNotification);
+
+    for (unsigned int i = 0; i < numberInfoLabel; ++i)
+    {
+        arrayInfoLabel[i]->setJustificationType (juce::Justification::centred);
+        infoComponent->addAndMakeVisible (arrayInfoLabel[i]);
+        arrayInfoLabel[i]->setBounds(infoLabelLeftCornerX, infoLabelLeftCornerY + infoLabelHeight * static_cast<int> (i), infoComponentWidth, infoLabelHeight);
+    }
+
+    DialogWindow::LaunchOptions infoWindowSettings;
+    infoWindowSettings.dialogTitle = String ("About");
+    infoWindowSettings.dialogBackgroundColour = bgColour;
+    infoWindowSettings.useNativeTitleBar = false;
+    infoWindowSettings.resizable = false;
+    infoWindowSettings.content.setOwned (infoComponent);
+    //infoWindowSettings.launchAsync();
+    DialogWindow* infoWindow = infoWindowSettings.create();
+    if (audioProcessor.wrapperType != AudioProcessor::wrapperType_Standalone)
+    {
+        infoWindow->setLookAndFeel (&lookAndFeel);
+    }
+    addAndMakeVisible (infoWindow);
+    infoWindow->setBounds(getLocalBounds().getX(), getLocalBounds().getY(), infoComponentWidth, infoComponentHeight + infoWindow->getTitleBarHeight());
 }

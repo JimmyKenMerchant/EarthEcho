@@ -81,12 +81,14 @@ private:
     juce::Colour thumbColour;
     juce::TextButton buttonChangeBgColour;
     juce::TextButton buttonChangeChannel;
+    juce::TextButton buttonInformation;
 
 
     //==============================================================================
     EarthEchoAudioProcessorEditorCustomLookAndFeel lookAndFeel;
     void setColourTheme();
     void changeLookAndFeel();
+    void createAboutWindow();
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EarthEchoAudioProcessorEditor)

@@ -28,6 +28,7 @@
 #define EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL 6
 #define EARTHECHO_NAME ((String) "EarthEcho")
 #define EARTHECHO_VERSION ((String) ProjectInfo::versionString) // In Generated JuceHeader.h
+#define EARTHECHO_COMPANY ((String) ProjectInfo::companyName) // In Generated JuceHeader.h
 
 typedef struct EarthEcho_earthEchoSliderParameters
 {
