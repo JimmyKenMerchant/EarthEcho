@@ -386,7 +386,13 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
     lookAndFeel.setColour (juce::Slider::textBoxBackgroundColourId, juce::Colour (0x00000000));
     lookAndFeel.setColour (juce::Slider::textBoxHighlightColourId, textColour);
     lookAndFeel.setColour (juce::Slider::textBoxOutlineColourId, textColour);
+    lookAndFeel.setColour (juce::TextEditor::backgroundColourId, bgColour);
+    lookAndFeel.setColour (juce::TextEditor::textColourId, textColour);
+    lookAndFeel.setColour (juce::TextEditor::highlightColourId, textColour);
     lookAndFeel.setColour (juce::TextEditor::highlightedTextColourId, bgColour);// Also Effects Text Box of Slider
+    lookAndFeel.setColour (juce::TextEditor::outlineColourId, bgColour);
+    lookAndFeel.setColour (juce::TextEditor::focusedOutlineColourId, juce::Colour (0x00000000));
+    lookAndFeel.setColour (juce::TextEditor::shadowColourId, juce::Colour (0x00000000));
     lookAndFeel.setColour (juce::Label::backgroundColourId, juce::Colour (0x00000000));
     lookAndFeel.setColour (juce::Label::textColourId, textColour);
     lookAndFeel.setColour (juce::Label::outlineColourId, juce::Colour (0x00000000));
@@ -430,39 +436,31 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
 
 void EarthEchoAudioProcessorEditor::createAboutWindow()
 {
-    const unsigned int numberInfoLabel = 5;
-    std::vector<juce::Label*> arrayInfoLabel (numberInfoLabel);
+    juce::TextEditor* infoTextComponent = new juce::TextEditor();
+    infoTextComponent->setSize (300, 150);
+    infoTextComponent->setJustification (juce::Justification::centred);
+    infoTextComponent->setReadOnly (true);
+    infoTextComponent->setSelectAllWhenFocused (false);
+    infoTextComponent->setMultiLine (true, true);
+    infoTextComponent->setLineSpacing (1.5f);
+    infoTextComponent->setBorder (juce::BorderSize<int> (0, 0, 0, 0));
+    infoTextComponent->setScrollbarsShown (false);
+
     juce::Time compilationTime = juce::Time::getCompilationDate();
-    juce::Component* infoComponent = new juce::Component();
-    infoComponent->setSize (300, 150);
-    auto infoLabelLeftCornerX = infoComponent->getLocalBounds().getX();
-    auto infoLabelLeftCornerY = infoComponent->getLocalBounds().getY();
-    auto infoComponentWidth = infoComponent->getLocalBounds().getWidth();
-    auto infoComponentHeight = infoComponent->getLocalBounds().getHeight();
-    auto infoLabelHeight = infoComponentHeight / static_cast<int> (numberInfoLabel);
-
-    for (unsigned int i = 0; i < numberInfoLabel; ++i)
-        arrayInfoLabel[i] = new juce::Label();
-
-    arrayInfoLabel[0]->setText (EARTHECHO_NAME + String (" v") + EARTHECHO_VERSION, juce::dontSendNotification);
-    arrayInfoLabel[1]->setText (String ("Copyright (c) ") + String (compilationTime.getYear()) + String (" ") + EARTHECHO_COMPANY + String ("."), juce::dontSendNotification);
-    arrayInfoLabel[2]->setText (String ("License: GPLv3"), juce::dontSendNotification);
-    arrayInfoLabel[3]->setText (String ("Build Date: ") + String (compilationTime.toString(true, false, false, false)), juce::dontSendNotification);
-    arrayInfoLabel[4]->setText (String ("JUCE Framework Version: ") + String (JUCE_MAJOR_VERSION) + String (".") + String (JUCE_MINOR_VERSION) + String (".") + String (JUCE_BUILDNUMBER), juce::dontSendNotification);
-
-    for (unsigned int i = 0; i < numberInfoLabel; ++i)
-    {
-        arrayInfoLabel[i]->setJustificationType (juce::Justification::centred);
-        infoComponent->addAndMakeVisible (arrayInfoLabel[i]);
-        arrayInfoLabel[i]->setBounds(infoLabelLeftCornerX, infoLabelLeftCornerY + infoLabelHeight * static_cast<int> (i), infoComponentWidth, infoLabelHeight);
-    }
+    String infoText = EARTHECHO_NAME + String (" v") + EARTHECHO_VERSION + newLine;
+    infoText += String ("Copyright (c) ") + String (compilationTime.getYear()) + String (" ") + EARTHECHO_COMPANY + String (".") + newLine;
+    infoText += String ("JimmyKenMerchant.com") + newLine;
+    infoText += String ("License: GPLv3") + newLine;
+    infoText += String ("Build Date: ") + String (compilationTime.toString(true, false, false, false)) + newLine;
+    infoText += String ("JUCE Framework Version: ") + String (JUCE_MAJOR_VERSION) + String (".") + String (JUCE_MINOR_VERSION) + String (".") + String (JUCE_BUILDNUMBER) + newLine;
+    infoTextComponent->setText (infoText);
 
     DialogWindow::LaunchOptions infoWindowSettings;
     infoWindowSettings.dialogTitle = String ("About");
     infoWindowSettings.dialogBackgroundColour = bgColour;
     infoWindowSettings.useNativeTitleBar = false;
     infoWindowSettings.resizable = false;
-    infoWindowSettings.content.setOwned (infoComponent);
+    infoWindowSettings.content.setOwned (infoTextComponent);
     //infoWindowSettings.launchAsync();
     DialogWindow* infoWindow = infoWindowSettings.create();
     if (audioProcessor.wrapperType != AudioProcessor::wrapperType_Standalone)
@@ -470,5 +468,7 @@ void EarthEchoAudioProcessorEditor::createAboutWindow()
         infoWindow->setLookAndFeel (&lookAndFeel);
     }
     addAndMakeVisible (infoWindow);
-    infoWindow->setBounds(getLocalBounds().getX(), getLocalBounds().getY(), infoComponentWidth, infoComponentHeight + infoWindow->getTitleBarHeight());
+    auto infoTextComponentWidth = infoTextComponent->getLocalBounds().getWidth();
+    auto infoTextComponentHeight = infoTextComponent->getLocalBounds().getHeight();
+    infoWindow->setBounds(getLocalBounds().getX(), getLocalBounds().getY(), infoTextComponentWidth, infoTextComponentHeight + infoWindow->getTitleBarHeight());
 }
