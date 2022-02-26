@@ -82,7 +82,9 @@ private:
     juce::TextButton buttonChangeBgColour;
     juce::TextButton buttonChangeChannel;
     juce::TextButton buttonInformation;
-
+    juce::Image imagePng128;
+    juce::String idAboutWindow;
+    juce::String idAboutText;
 
     //==============================================================================
     EarthEchoAudioProcessorEditorCustomLookAndFeel lookAndFeel;

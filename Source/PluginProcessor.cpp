@@ -58,7 +58,7 @@ EarthEchoAudioProcessor::EarthEchoAudioProcessor()
     {
         addParameter (arrayParameter[i] = new juce::AudioParameterFloat (earthEchoSliderParameters[i].id, earthEchoSliderParameters[i].name, earthEchoSliderParameters[i].range, earthEchoSliderParameters[i].initialValue, earthEchoSliderParameters[i].label));
     }
-    juce::Logger::getCurrentLogger()->writeToLog ("Size of paramters is " + String (static_cast<int> (arrayParameter.size())) + " items.");
+    juce::Logger::getCurrentLogger()->writeToLog ("Size of paramters is " + juce::String (static_cast<int> (arrayParameter.size())) + " items.");
 }
 
 EarthEchoAudioProcessor::~EarthEchoAudioProcessor()
@@ -131,8 +131,8 @@ void EarthEchoAudioProcessor::changeProgramName (int /*index*/, const juce::Stri
 void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int /*samplesPerBlock*/)
 {
     // Initialization before Playback
-    //juce::Logger::getCurrentLogger()->writeToLog (String (sampleRate, 5));
-    //juce::Logger::getCurrentLogger()->writeToLog (String (static_cast<int> (sampleRate)));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String (sampleRate, 5));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String (static_cast<int> (sampleRate)));
     playBackSampleRate = static_cast<unsigned int> (sampleRate);
     // Moving Average for Low-pass Filter and High-pass Filter for Each Channel
     for (unsigned int i = 0; i < static_cast<unsigned int> (getTotalNumInputChannels() * 2); ++i)
@@ -145,7 +145,7 @@ void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int /*samplesPer
     {
         std::vector<float> channel (playBackSampleRate, 0.0f);
         arrayDelay.push_back (channel);
-        juce::Logger::getCurrentLogger()->writeToLog ("Sample rate of channel " + String (i) + " is " + String (arrayDelay[i].size()) + "Hz.");
+        juce::Logger::getCurrentLogger()->writeToLog ("Sample rate of channel " + juce::String (i) + " is " + juce::String (arrayDelay[i].size()) + "Hz.");
     }
     if (wrapperType == AudioProcessor::wrapperType_Standalone)
     {
@@ -153,7 +153,7 @@ void EarthEchoAudioProcessor::prepareToPlay (double sampleRate, int /*samplesPer
         juce::File path (File::getCurrentWorkingDirectory().getFullPathName() + File::getSeparatorString() + earthEchoArguments[0]);
         if (path.existsAsFile())
         {
-            juce::Logger::getCurrentLogger()->writeToLog (String ("Loading Parameter File..."));
+            juce::Logger::getCurrentLogger()->writeToLog (juce::String ("Loading Parameter File..."));
             juce::MemoryBlock savedData;
             if (path.loadFileAsData (savedData))
                 setStateInformation (savedData.getData(), static_cast<int> (savedData.getSize()));
@@ -250,7 +250,7 @@ void EarthEchoAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // Save Data to Memory Block
     // Consider to use XML (strings) or JUCE's unique ValueTree classes.
     // Raw Data
-    MemoryOutputStream outputStream (destData, true);
+    juce::MemoryOutputStream outputStream (destData, true);
     for (unsigned int i = 0; i < arrayParameter.size(); ++i)
         outputStream.writeFloat (*arrayParameter[i]);
     outputStream.writeInt (stateColourTheme);
@@ -260,7 +260,7 @@ void EarthEchoAudioProcessor::setStateInformation (const void* data, int sizeInB
 {
     // Load Data from Memory Block
     // Raw Data
-    MemoryInputStream inputStream (data, static_cast<size_t> (sizeInBytes), false);
+    juce::MemoryInputStream inputStream (data, static_cast<size_t> (sizeInBytes), false);
     for (unsigned int i = 0; i < arrayParameter.size(); ++i)
         arrayParameter[i]->setValueNotifyingHost (inputStream.readFloat());
     stateColourTheme = inputStream.readInt();

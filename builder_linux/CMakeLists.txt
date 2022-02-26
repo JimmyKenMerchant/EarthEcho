@@ -62,7 +62,18 @@ target_sources(${PLUGIN_NAME}
     ../Source/PluginProcessor.cpp
 )
 
-# JUCE Modules
+juce_add_binary_data(${PLUGIN_NAME}_images
+  SOURCES
+    ../resources/icons/icon128.png
+    ../resources/icons/icon256.png
+)
+
+set_target_properties(${PLUGIN_NAME}_images
+  PROPERTIES
+    POSITION_INDEPENDENT_CODE TRUE
+)
+
+# JUCE Modules and Binary Data
 target_link_libraries(${PLUGIN_NAME}
   PRIVATE
     juce::juce_audio_basics
@@ -79,6 +90,7 @@ target_link_libraries(${PLUGIN_NAME}
     juce::juce_gui_basics
     juce::juce_gui_extra
     # juce::juce_opengl
+    ${PLUGIN_NAME}_images
 )
 
 # Recommended Flags

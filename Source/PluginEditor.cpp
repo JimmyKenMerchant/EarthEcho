@@ -58,7 +58,7 @@ class LookAndFeel_V4_DocumentWindowButton   : public Button
 {
 public:
 // Modification: Removed "Colour c,"
-    LookAndFeel_V4_DocumentWindowButton (const String& name, const Path& normal, const Path& toggled)
+    LookAndFeel_V4_DocumentWindowButton (const juce::String& name, const Path& normal, const Path& toggled)
 // Modification: Removed "colour (c),"
         : Button (name), normalShape (normal), toggledShape (toggled)
     {
@@ -176,7 +176,10 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
       arrayLabel (static_cast<unsigned int> (audioProcessor.getParameters().size())),
       stateDisplayChannel (false)
 {
-    juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + String (audioProcessor.getName()));
+    juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + juce::String (audioProcessor.getName()));
+    imagePng128 = juce::ImageFileFormat::loadFrom(BinaryData::icon128_png, BinaryData::icon128_pngSize);
+    idAboutWindow = juce::String ("EarthEchoAboutWindow");
+    idAboutText = juce::String ("EarthEchoAboutText");
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
     {
         juce::LookAndFeel::setDefaultLookAndFeel(&lookAndFeel); // For Dialog Window of Audio/MIDI Settings
@@ -184,11 +187,12 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
         std::vector<int> sizesOnWindow = {400, 200, userAreaOfDisplay.getWidth(), userAreaOfDisplay.getHeight()};
         // Plugin Holder
         auto* toplevelDocumentWindow = dynamic_cast<DocumentWindow*> (juce::TopLevelWindow::getTopLevelWindow (0));
-        toplevelDocumentWindow->setName(EARTHECHO_NAME + String (" v") + EARTHECHO_VERSION);
+        toplevelDocumentWindow->setName(EARTHECHO_NAME + juce::String (" v") + EARTHECHO_VERSION);
         toplevelDocumentWindow->setTitleBarButtonsRequired(DocumentWindow::allButtons, false);
         toplevelDocumentWindow->setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
         toplevelDocumentWindow->setResizable(true, false);
         toplevelDocumentWindow->setLookAndFeel (&lookAndFeel);
+        toplevelDocumentWindow->setIcon (imagePng128);
         // Plugin Panel
         setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
         setResizable(true, false);
@@ -196,7 +200,7 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
     setLookAndFeel (&lookAndFeel);
     // Set the size of this GUI before the end of this constructor.
     setSize (600, 400);
-    //juce::Logger::getCurrentLogger()->writeToLog (String (arraySlider.size()));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String (arraySlider.size()));
     for (unsigned int i = 0; i < arraySlider.size(); ++i)
     {
         arraySlider[i].setSliderStyle (juce::Slider::LinearVertical);
@@ -247,16 +251,18 @@ void EarthEchoAudioProcessorEditor::paint (juce::Graphics& g)
     // Set Text Colour
     g.setColour (textColour);
     g.setFont (16.0f);
-    g.drawFittedText (EARTHECHO_NAME + newLine + String ("v") + EARTHECHO_VERSION, getLocalBounds(), juce::Justification::centred, 1);
+    g.drawFittedText (EARTHECHO_NAME + newLine + juce::String ("v") + EARTHECHO_VERSION, getLocalBounds(), juce::Justification::centred, 1);
+    auto imageFactor = 32.0f / static_cast<float> (imagePng128.getWidth());
+    g.drawImageTransformed (imagePng128, juce::AffineTransform::scale (imageFactor, imageFactor).translated (10, 10), false);
 }
 
 void EarthEchoAudioProcessorEditor::resized()
 {
     // Subcomponents
-    //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getX()));
-    //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getY()));
-    //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getWidth()));
-    //juce::Logger::getCurrentLogger()->writeToLog (String (getLocalBounds().getHeight()));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String (getLocalBounds().getX()));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String (getLocalBounds().getY()));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String (getLocalBounds().getWidth()));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String (getLocalBounds().getHeight()));
     auto leftCornerX = static_cast<int> (getLocalBounds().getX());
     auto leftCornerY = static_cast<int> (getLocalBounds().getY());
     auto editorWidth = static_cast<int> (getLocalBounds().getWidth());
@@ -286,13 +292,13 @@ void EarthEchoAudioProcessorEditor::resized()
 
 void EarthEchoAudioProcessorEditor::audioProcessorParameterChanged (AudioProcessor* /*processor*/, int parameterIndex, float newValue)
 {
-    //juce::Logger::getCurrentLogger()->writeToLog (String ("EarthEchoAudioProcessorEditor::audioProcessorParameterChanged"));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String ("EarthEchoAudioProcessorEditor::audioProcessorParameterChanged"));
     arraySlider[static_cast<unsigned int> (parameterIndex)].setValue (newValue * earthEchoSliderParameters[static_cast<unsigned int> (parameterIndex)].expander);
 }
 
 void EarthEchoAudioProcessorEditor::audioProcessorChanged (AudioProcessor* /*processor*/, const ChangeDetails& /*details*/)
 {
-    //juce::Logger::getCurrentLogger()->writeToLog (String ("EarthEchoAudioProcessorEditor::audioProcessorChanged"));
+    //juce::Logger::getCurrentLogger()->writeToLog (juce::String ("EarthEchoAudioProcessorEditor::audioProcessorChanged"));
 }
 
 void EarthEchoAudioProcessorEditor::sliderValueChanged (juce::Slider* slider)
@@ -431,44 +437,63 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
     {
         arraySlider[i].lookAndFeelChanged(); // To Change Colors for Text Box of Slider
     }
+    Component* aboutWindow = findChildWithID (idAboutWindow);
+    if (aboutWindow != nullptr)
+    {
+        Component* aboutText = aboutWindow->findChildWithID (idAboutText);
+        if (aboutText != nullptr)
+        {
+            dynamic_cast<juce::TextEditor*> (aboutText)->applyColourToAllText(textColour, true);
+        }
+    }
     lookAndFeel.setWindowLookAndFeel (bgColour, textColour);
 }
 
 void EarthEchoAudioProcessorEditor::createAboutWindow()
 {
-    juce::TextEditor* infoTextComponent = new juce::TextEditor();
-    infoTextComponent->setSize (300, 150);
-    infoTextComponent->setJustification (juce::Justification::centred);
-    infoTextComponent->setReadOnly (true);
-    infoTextComponent->setSelectAllWhenFocused (false);
-    infoTextComponent->setMultiLine (true, true);
-    infoTextComponent->setLineSpacing (1.5f);
-    infoTextComponent->setBorder (juce::BorderSize<int> (0, 0, 0, 0));
-    infoTextComponent->setScrollbarsShown (false);
+    Component* aboutWindow = findChildWithID (idAboutWindow);
+    if (aboutWindow == nullptr)
+    { // Initial Opening
+        juce::TextEditor* infoTextComponent = new juce::TextEditor();
+        infoTextComponent->setSize (300, 150);
+        infoTextComponent->setJustification (juce::Justification::centred);
+        infoTextComponent->setReadOnly (true);
+        infoTextComponent->setSelectAllWhenFocused (false);
+        infoTextComponent->setMultiLine (true, true);
+        infoTextComponent->setLineSpacing (1.5f);
+        infoTextComponent->setBorder (juce::BorderSize<int> (0, 0, 0, 0));
+        infoTextComponent->setScrollbarsShown (false);
+        infoTextComponent->setLookAndFeel (&lookAndFeel);
 
-    juce::Time compilationTime = juce::Time::getCompilationDate();
-    String infoText = EARTHECHO_NAME + String (" v") + EARTHECHO_VERSION + newLine;
-    infoText += String ("Copyright (c) ") + String (compilationTime.getYear()) + String (" ") + EARTHECHO_COMPANY + String (".") + newLine;
-    infoText += String ("JimmyKenMerchant.com") + newLine;
-    infoText += String ("License: GPLv3") + newLine;
-    infoText += String ("Build Date: ") + String (compilationTime.toString(true, false, false, false)) + newLine;
-    infoText += String ("JUCE Framework Version: ") + String (JUCE_MAJOR_VERSION) + String (".") + String (JUCE_MINOR_VERSION) + String (".") + String (JUCE_BUILDNUMBER) + newLine;
-    infoTextComponent->setText (infoText);
+        juce::Time compilationTime = juce::Time::getCompilationDate();
+        juce::String infoText = EARTHECHO_NAME + juce::String (" v") + EARTHECHO_VERSION + newLine;
+        infoText += juce::String ("Copyright (c) ") + juce::String (compilationTime.getYear()) + juce::String (" ") + EARTHECHO_COMPANY + juce::String (".") + newLine;
+        infoText += juce::String ("JimmyKenMerchant.com") + newLine;
+        infoText += juce::String ("License: GPLv3") + newLine;
+        infoText += juce::String ("Build Date: ") + juce::String (compilationTime.toString(true, false, false, false)) + newLine;
+        infoText += juce::String ("JUCE Framework Version: ") + juce::String (JUCE_MAJOR_VERSION) + juce::String (".") + juce::String (JUCE_MINOR_VERSION) + juce::String (".") + juce::String (JUCE_BUILDNUMBER) + newLine;
+        infoTextComponent->setText (infoText);
+        infoTextComponent->setComponentID (idAboutText);
 
-    DialogWindow::LaunchOptions infoWindowSettings;
-    infoWindowSettings.dialogTitle = String ("About");
-    infoWindowSettings.dialogBackgroundColour = bgColour;
-    infoWindowSettings.useNativeTitleBar = false;
-    infoWindowSettings.resizable = false;
-    infoWindowSettings.content.setOwned (infoTextComponent);
-    //infoWindowSettings.launchAsync();
-    DialogWindow* infoWindow = infoWindowSettings.create();
-    if (audioProcessor.wrapperType != AudioProcessor::wrapperType_Standalone)
-    {
-        infoWindow->setLookAndFeel (&lookAndFeel);
+        DialogWindow::LaunchOptions infoWindowSettings;
+        infoWindowSettings.dialogTitle = juce::String ("About");
+        infoWindowSettings.dialogBackgroundColour = bgColour;
+        infoWindowSettings.useNativeTitleBar = false;
+        infoWindowSettings.resizable = false;
+        infoWindowSettings.content.setOwned (infoTextComponent);
+        DialogWindow* infoWindow = infoWindowSettings.create();
+        if (audioProcessor.wrapperType != AudioProcessor::wrapperType_Standalone)
+        {
+            infoWindow->setLookAndFeel (&lookAndFeel);
+        }
+        infoWindow->setComponentID (idAboutWindow);
+        addAndMakeVisible (infoWindow);
+        auto infoTextComponentWidth = infoTextComponent->getLocalBounds().getWidth();
+        auto infoTextComponentHeight = infoTextComponent->getLocalBounds().getHeight();
+        infoWindow->setBounds(getLocalBounds().getX(), getLocalBounds().getY(), infoTextComponentWidth, infoTextComponentHeight + infoWindow->getTitleBarHeight());
     }
-    addAndMakeVisible (infoWindow);
-    auto infoTextComponentWidth = infoTextComponent->getLocalBounds().getWidth();
-    auto infoTextComponentHeight = infoTextComponent->getLocalBounds().getHeight();
-    infoWindow->setBounds(getLocalBounds().getX(), getLocalBounds().getY(), infoTextComponentWidth, infoTextComponentHeight + infoWindow->getTitleBarHeight());
+    else
+    { // Opening after Clicking Close Button
+        aboutWindow->setVisible (true);
+    }
 }

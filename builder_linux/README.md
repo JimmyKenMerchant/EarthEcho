@@ -48,6 +48,7 @@
 
 **History**
 
+* February 26, 2022: Added GPLv3 License to "builder_linux.sh" and "installer_linux.sh".
 * February 23, 2022: Modified "installer_linux.sh" about installing icons with imcomplete set of sizes.
 * February 5, 2022: Added the "icons" arguments to "installer_linux.sh". Installing with lowercase letters.
 * January 30, 2022: Added the "debug" and "newjuce" arguments to "builder_linux.sh".

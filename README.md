@@ -20,9 +20,10 @@
   * 'LP Filter': Changes frequency of the low-pass filter effected on the echo.
   * 'HP Filter': Changes frequency of the high-pass filter effected on the echo.
 
-* There are 2 buttons.
-  * 'BGCOLOR': Changes the background color of the GUI.
+* There are 3 buttons.
+  * 'ABOUT': Shows the product information of this plugin.
   * 'L/R': Alternates displaying sliders for each channel.
+  * 'BGCOLOR': Changes the background color of the GUI.
 
 * In the convention of the digital audio world, the first audio input/output called as "input/output 1" is for the left channel of a stereo system, and the second one called as "input/output 2" is for the right channel. This plugin follows this convention, and you'll watch numbered inputs and outputs for this plugin in your audio plugin host.
 
