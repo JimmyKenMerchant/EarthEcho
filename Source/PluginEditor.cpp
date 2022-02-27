@@ -177,25 +177,28 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
       stateDisplayChannel (false)
 {
     juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + juce::String (audioProcessor.getName()));
-    imagePng128 = juce::ImageFileFormat::loadFrom(BinaryData::icon128_png, BinaryData::icon128_pngSize);
+    imagePng128 = juce::ImageFileFormat::loadFrom (BinaryData::icon128_png, BinaryData::icon128_pngSize);
     idAboutWindow = juce::String ("EarthEchoAboutWindow");
     idAboutText = juce::String ("EarthEchoAboutText");
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
     {
-        juce::LookAndFeel::setDefaultLookAndFeel(&lookAndFeel); // For Dialog Window of Audio/MIDI Settings
-        Rectangle<int> userAreaOfDisplay = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
-        std::vector<int> sizesOnWindow = {400, 200, userAreaOfDisplay.getWidth(), userAreaOfDisplay.getHeight()};
         // Plugin Holder
         auto* toplevelDocumentWindow = dynamic_cast<DocumentWindow*> (juce::TopLevelWindow::getTopLevelWindow (0));
-        toplevelDocumentWindow->setName(EARTHECHO_NAME + juce::String (" v") + EARTHECHO_VERSION);
-        toplevelDocumentWindow->setTitleBarButtonsRequired(DocumentWindow::allButtons, false);
-        toplevelDocumentWindow->setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
-        toplevelDocumentWindow->setResizable(true, false);
-        toplevelDocumentWindow->setLookAndFeel (&lookAndFeel);
-        toplevelDocumentWindow->setIcon (imagePng128);
-        // Plugin Panel
-        setResizeLimits(sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
-        setResizable(true, false);
+        if (toplevelDocumentWindow != nullptr)
+        {
+            juce::LookAndFeel::setDefaultLookAndFeel (&lookAndFeel); // For Dialog Window of Audio/MIDI Settings
+            Rectangle<int> userAreaOfDisplay = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
+            std::vector<int> sizesOnWindow = {400, 200, userAreaOfDisplay.getWidth(), userAreaOfDisplay.getHeight()};
+            toplevelDocumentWindow->setName (EARTHECHO_NAME + juce::String (" v") + EARTHECHO_VERSION);
+            toplevelDocumentWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
+            toplevelDocumentWindow->setResizeLimits (sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
+            toplevelDocumentWindow->setResizable (true, false);
+            toplevelDocumentWindow->setLookAndFeel (&lookAndFeel);
+            toplevelDocumentWindow->setIcon (imagePng128);
+            // Plugin Panel
+            setResizeLimits (sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
+            setResizable (true, false);
+        }
     }
     setLookAndFeel (&lookAndFeel);
     // Set the size of this GUI before the end of this constructor.
@@ -237,7 +240,7 @@ EarthEchoAudioProcessorEditor::~EarthEchoAudioProcessorEditor()
     audioProcessor.removeListener (this);
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
     {
-        juce::LookAndFeel::setDefaultLookAndFeel(nullptr);
+        juce::LookAndFeel::setDefaultLookAndFeel (nullptr);
     }
 }
 
@@ -443,7 +446,7 @@ void EarthEchoAudioProcessorEditor::changeLookAndFeel()
         Component* aboutText = aboutWindow->findChildWithID (idAboutText);
         if (aboutText != nullptr)
         {
-            dynamic_cast<juce::TextEditor*> (aboutText)->applyColourToAllText(textColour, true);
+            dynamic_cast<juce::TextEditor*> (aboutText)->applyColourToAllText (textColour, true);
         }
     }
     lookAndFeel.setWindowLookAndFeel (bgColour, textColour);
@@ -470,7 +473,7 @@ void EarthEchoAudioProcessorEditor::createAboutWindow()
         infoText += juce::String ("Copyright (c) ") + juce::String (compilationTime.getYear()) + juce::String (" ") + EARTHECHO_COMPANY + juce::String (".") + newLine;
         infoText += juce::String ("JimmyKenMerchant.com") + newLine;
         infoText += juce::String ("License: GPLv3") + newLine;
-        infoText += juce::String ("Build Date: ") + juce::String (compilationTime.toString(true, false, false, false)) + newLine;
+        infoText += juce::String ("Build Date: ") + juce::String (compilationTime.toString (true, false, false, false)) + newLine;
         infoText += juce::String ("JUCE Framework Version: ") + juce::String (JUCE_MAJOR_VERSION) + juce::String (".") + juce::String (JUCE_MINOR_VERSION) + juce::String (".") + juce::String (JUCE_BUILDNUMBER) + newLine;
         infoTextComponent->setText (infoText);
         infoTextComponent->setComponentID (idAboutText);
@@ -490,7 +493,7 @@ void EarthEchoAudioProcessorEditor::createAboutWindow()
         addAndMakeVisible (infoWindow);
         auto infoTextComponentWidth = infoTextComponent->getLocalBounds().getWidth();
         auto infoTextComponentHeight = infoTextComponent->getLocalBounds().getHeight();
-        infoWindow->setBounds(getLocalBounds().getX(), getLocalBounds().getY(), infoTextComponentWidth, infoTextComponentHeight + infoWindow->getTitleBarHeight());
+        infoWindow->setBounds (getLocalBounds().getX(), getLocalBounds().getY(), infoTextComponentWidth, infoTextComponentHeight + infoWindow->getTitleBarHeight());
     }
     else
     { // Opening after Clicking Close Button
