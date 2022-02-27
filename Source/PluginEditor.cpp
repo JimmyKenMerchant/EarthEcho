@@ -178,6 +178,7 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
 {
     juce::Logger::getCurrentLogger()->writeToLog ("Opening Plugin GUI Editor: " + juce::String (audioProcessor.getName()));
     imagePng128 = juce::ImageFileFormat::loadFrom (BinaryData::icon128_png, BinaryData::icon128_pngSize);
+    imagePng256 = juce::ImageFileFormat::loadFrom (BinaryData::icon256_png, BinaryData::icon256_pngSize);
     idAboutWindow = juce::String ("EarthEchoAboutWindow");
     idAboutText = juce::String ("EarthEchoAboutText");
     if (audioProcessor.wrapperType == AudioProcessor::wrapperType_Standalone)
@@ -198,6 +199,9 @@ EarthEchoAudioProcessorEditor::EarthEchoAudioProcessorEditor (EarthEchoAudioProc
             // Plugin Panel
             setResizeLimits (sizesOnWindow[0], sizesOnWindow[1], sizesOnWindow[2], sizesOnWindow[3]);
             setResizable (true, false);
+            // Taskbar Icon
+            juce::SystemTrayIconComponent taskbarIcon;
+            taskbarIcon.setIconImage(imagePng256, imagePng256);
         }
     }
     setLookAndFeel (&lookAndFeel);

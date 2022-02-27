@@ -83,6 +83,7 @@ private:
     juce::TextButton buttonChangeChannel;
     juce::TextButton buttonInformation;
     juce::Image imagePng128;
+    juce::Image imagePng256;
     juce::String idAboutWindow;
     juce::String idAboutText;
 
