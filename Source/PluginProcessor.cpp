@@ -52,7 +52,8 @@ EarthEchoAudioProcessor::EarthEchoAudioProcessor()
                        ),
 #endif
        stateColourTheme (0),
-       arrayParameter (EARTHECHO_NUMBER_PARAMETERS)
+       arrayParameter (EARTHECHO_NUMBER_PARAMETERS),
+       arrayMidiControllerValue (EARTHECHO_MIDICONTROLLER_NUMBER, 127)
 {
     for (unsigned int i = 0; i < arrayParameter.size(); ++i)
     {
@@ -188,11 +189,40 @@ bool EarthEchoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
+void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = static_cast<unsigned int> (getTotalNumInputChannels());
-
+    // MIDI Messages
+    if (! midiMessages.isEmpty())
+    {
+        for (const MidiMessageMetadata midiMessageMetadata : midiMessages)
+        {
+            if (midiMessageMetadata.numBytes == 3)
+            {
+                auto midiMessage = midiMessageMetadata.getMessage();
+                if (midiMessage.isController())
+                {
+                    auto indexMidiController = static_cast<unsigned int> (midiMessage.getControllerNumber() & EARTHECHO_MIDICONTROLLER_MASK);
+                    if (indexMidiController & EARTHECHO_MIDICONTROLLER_PRESICION_MASK) // Fine = LSB
+                    {
+                        indexMidiController ^= EARTHECHO_MIDICONTROLLER_PRESICION_MASK;
+                        arrayMidiControllerValue[indexMidiController] = (arrayMidiControllerValue[indexMidiController] & 0x3F80) | static_cast<unsigned short> (midiMessage.getControllerValue());
+                        arrayMidiControllerValue[indexMidiController] |= midiMessage.getControllerValue();
+                        //juce::Logger::getCurrentLogger()->writeToLog ("MIDI Controller Changes Value LSB on " + String (indexMidiController) + ": " + String (arrayMidiControllerValue[indexMidiController]));
+                    }
+                    else // Coarse = MSB
+                    {
+                        arrayMidiControllerValue[indexMidiController] = (arrayMidiControllerValue[indexMidiController] & 0x7F) | static_cast<unsigned short> (midiMessage.getControllerValue() << 7);
+                        //juce::Logger::getCurrentLogger()->writeToLog ("MIDI Controller Changes Value MSB on " + String (indexMidiController) + ": " + String (arrayMidiControllerValue[indexMidiController]));
+                    }
+                    if (indexMidiController < EARTHECHO_NUMBER_PARAMETERS)
+                        arrayParameter[indexMidiController]->setValueNotifyingHost (static_cast<float> (arrayMidiControllerValue[indexMidiController]) / static_cast<float> (0x3FFF));
+                    //juce::Logger::getCurrentLogger()->writeToLog ("MIDI Message: " + midiMessage.getDescription());
+                }
+            }
+        }
+    }
     // Channels
     for (unsigned int i = 0; i < totalNumInputChannels; ++i)
     {

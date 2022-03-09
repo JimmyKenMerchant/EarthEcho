@@ -26,6 +26,9 @@
 
 #define EARTHECHO_NUMBER_PARAMETERS 12
 #define EARTHECHO_NUMBER_PARAMETERS_SINGLECHANNEL 6
+#define EARTHECHO_MIDICONTROLLER_MASK 0x3F
+#define EARTHECHO_MIDICONTROLLER_PRESICION_MASK 0x20
+#define EARTHECHO_MIDICONTROLLER_NUMBER 32
 #define EARTHECHO_NAME ((String) "EarthEcho")
 #define EARTHECHO_VERSION ((String) ProjectInfo::versionString) // In Generated JuceHeader.h
 #define EARTHECHO_COMPANY ((String) ProjectInfo::companyName) // In Generated JuceHeader.h
@@ -98,6 +101,7 @@ public:
 private:
     //==============================================================================
     std::vector<juce::AudioParameterFloat*> arrayParameter;
+    std::vector<unsigned short> arrayMidiControllerValue;
     std::vector<std::vector<float>> arrayDelay;
     std::vector<float> arrayMovingAverage;
     std::vector<unsigned int> arrayPlayBackSampleCount;
