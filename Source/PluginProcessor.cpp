@@ -53,7 +53,7 @@ EarthEchoAudioProcessor::EarthEchoAudioProcessor()
 #endif
        stateColourTheme (0),
        arrayParameter (EARTHECHO_NUMBER_PARAMETERS),
-       arrayMidiControllerValue (EARTHECHO_MIDICONTROLLER_NUMBER, 127)
+       arrayMidiControllerValue (EARTHECHO_MIDICONTROLLER_NUMBER, 0)
 {
     for (unsigned int i = 0; i < arrayParameter.size(); ++i)
     {
@@ -204,20 +204,11 @@ void EarthEchoAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
                 if (midiMessage.isController())
                 {
                     auto indexMidiController = static_cast<unsigned int> (midiMessage.getControllerNumber() & EARTHECHO_MIDICONTROLLER_MASK);
-                    if (indexMidiController & EARTHECHO_MIDICONTROLLER_PRESICION_MASK) // Fine = LSB
-                    {
-                        indexMidiController ^= EARTHECHO_MIDICONTROLLER_PRESICION_MASK;
-                        arrayMidiControllerValue[indexMidiController] = (arrayMidiControllerValue[indexMidiController] & 0x3F80) | static_cast<unsigned short> (midiMessage.getControllerValue());
-                        arrayMidiControllerValue[indexMidiController] |= midiMessage.getControllerValue();
-                        //juce::Logger::getCurrentLogger()->writeToLog ("MIDI Controller Changes Value LSB on " + String (indexMidiController) + ": " + String (arrayMidiControllerValue[indexMidiController]));
-                    }
-                    else // Coarse = MSB
-                    {
-                        arrayMidiControllerValue[indexMidiController] = (arrayMidiControllerValue[indexMidiController] & 0x7F) | static_cast<unsigned short> (midiMessage.getControllerValue() << 7);
-                        //juce::Logger::getCurrentLogger()->writeToLog ("MIDI Controller Changes Value MSB on " + String (indexMidiController) + ": " + String (arrayMidiControllerValue[indexMidiController]));
-                    }
+                    auto valueMidiController = static_cast<unsigned short> (midiMessage.getControllerValue());
+                    arrayMidiControllerValue[indexMidiController] = valueMidiController > EARTHECHO_MIDICONTROLLER_MAX_VALUE ? EARTHECHO_MIDICONTROLLER_MAX_VALUE : valueMidiController;
+                    //juce::Logger::getCurrentLogger()->writeToLog ("MIDI Controller Changes Value MSB on " + String (indexMidiController) + ": " + String (arrayMidiControllerValue[indexMidiController]));
                     if (indexMidiController < EARTHECHO_NUMBER_PARAMETERS)
-                        arrayParameter[indexMidiController]->setValueNotifyingHost (static_cast<float> (arrayMidiControllerValue[indexMidiController]) / static_cast<float> (0x3FFF));
+                        arrayParameter[indexMidiController]->setValueNotifyingHost (static_cast<float> (arrayMidiControllerValue[indexMidiController]) / static_cast<float> (EARTHECHO_MIDICONTROLLER_MAX_VALUE));
                     //juce::Logger::getCurrentLogger()->writeToLog ("MIDI Message: " + midiMessage.getDescription());
                 }
             }

@@ -20,6 +20,12 @@
   * 'LP Filter': Changes frequency of the low-pass filter effected on the echo.
   * 'HP Filter': Changes frequency of the high-pass filter effected on the echo.
 
+* Parameters can be changed through MIDI messages.
+  * Received control change / continuous controller (CC) number is masked to enable only least 5 bits, i.e., CC number modulo 32 will be used to determine the number.
+  * Parameters are assigned to CC# 0-5 for L channel, and CC# 6-11 for R channel. The order is the same as the description above.
+  * Resolution is 0-100. The value 101-127 will be saturated to 100.
+  * There is no channel selection so far because of considering multiple MIDI through ports and MIDI channel filters in your system.
+
 * There are 3 buttons.
   * 'ABOUT': Shows the product information of this plugin.
   * 'L/R': Alternates displaying sliders for each channel.
