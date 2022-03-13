@@ -8,7 +8,7 @@
               pluginCode="Eech" pluginAUMainType="'aufx'" pluginAUIsSandboxSafe="1"
               pluginVST3Category="Delay" pluginName="EarthEcho" pluginDesc="The Echo to Emulate Nature"
               pluginManufacturer="Kenta Ishii" bundleIdentifier="com.jimmykenmerchant.earthEcho"
-              pluginAUExportPrefix="EarthEchoAU" projectLineFeed="&#10;" pluginCharacteristicsValue="pluginWantsMidiIn">
+              pluginAUExportPrefix="EarthEchoAU" projectLineFeed="&#10;">
   <MAINGROUP id="KLYmPg" name="EarthEcho">
     <GROUP id="{A84079E8-A698-85F7-5729-956333CB3922}" name="Source">
       <FILE id="MrlX0h" name="PluginProcessor.cpp" compile="1" resource="0"

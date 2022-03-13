@@ -20,11 +20,12 @@
   * 'LP Filter': Changes frequency of the low-pass filter effected on the echo.
   * 'HP Filter': Changes frequency of the high-pass filter effected on the echo.
 
-* Parameters can be changed through MIDI messages.
+* Parameter values can be changed through MIDI messages (Standalone Plugin).
   * Received control change / continuous controller (CC) number is masked to enable only least 5 bits, i.e., CC number modulo 32 will be used to determine the number.
   * Parameters are assigned to CC# 0-5 for L channel, and CC# 6-11 for R channel. The order is the same as the description above.
   * Resolution is 0-100. The value 101-127 will be saturated to 100.
-  * There is no channel selection so far because of considering multiple MIDI through ports and MIDI channel filters in your system.
+  * There is no channel selection so far because of considering multiple MIDI through ports in your system. To make multiple MIDI through ports in Linux, use 'snd-seq-dummy (ALSA sequencer MIDI-through client)'.
+  * When you use a plugin host, but not this standalone plugin, the plugin host would have a function to map MIDI channels and CCs to change parameter values. In this case, you need to change a parameter value between 0 to 1.0 with a received CC value, 0-127. In this plugin, I set interval to snap the decimal for each parameters, and it helps the precise control.
 
 * There are 3 buttons.
   * 'ABOUT': Shows the product information of this plugin.
@@ -59,6 +60,8 @@ sudo ./installer_linux.sh vst3 lv2 standalone icons
 ## Technical Notes
 
 * 02/15/2022: ~6.1.5-lv2 seems to make no sound on LV2 plugin format. Checkout to 6.1.4-lv2.~ [lv2 has already become OK.](https://github.com/lv2-porting-project/JUCE/pull/21)
+
+* 03/13/2022 (6.1.5): The standalone plugin accepts MIDI messages even if you don't set `pluginCharacteristicsValue="pluginWantsMidiIn"` in 'EarthEcho.jucer' or `NEEDS_MIDI_INPUT TRUE` in 'builder_linux/CMakeLists.txt'. The wrapper for standalone plugins in 'JUCE/modules/juce_audio_plugin_client/Standalone' doesn't use a definition, `JucePlugin_WantsMidiInput`, to check the necessity of MIDI messages. However, the standalone plugin needs to select one of "Active MIDI inputs" on "Audio/MIDI Settings".
 
 ## License
 
